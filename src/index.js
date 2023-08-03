@@ -2,12 +2,19 @@
 // 3 - two-square ships
 // 2 - three-square ships
 // 1 - four-square ship
-// make a rule for a ship location
 
 const Ship = (coordinates) => {
   let shipLength = coordinates.length;
   const location = [...coordinates];
+  // check if a ship is on the board
+  const isOnTheBoard = () =>
+    coordinates.every((item) => {
+      if (item[0] >= 0 && item[1] >= 0 && item[0] <= 9 && item[1] <= 9) {
+        return true;
+      }
+    });
 
+  // cb functions for checkCoordinates()
   const sameXcb = (value, index, array) => {
     console.log(value);
     if (
@@ -17,7 +24,6 @@ const Ship = (coordinates) => {
       return true;
     }
   };
-
   const sameYcb = (value, index, array) => {
     console.log(value);
     if (
@@ -57,7 +63,7 @@ const Ship = (coordinates) => {
     }
   };
 
-  return { location, wasHit, checkCoordinates };
+  return { location, wasHit, checkCoordinates, isOnTheBoard };
 };
 
 // gameboard will take ships locations as an array
@@ -97,7 +103,7 @@ const ship2 = Ship([
   [2, 7],
 ]);
 
-console.log(ship1.checkCoordinates());
+console.log(ship1.isOnTheBoard());
 // ship1.wasHit();
 // ship1.wasHit();
 
