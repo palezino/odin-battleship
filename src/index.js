@@ -1,8 +1,51 @@
-console.log("so it begins...");
+// create 4 one-square ships
+// 3 - two-square ships
+// 2 - three-square ships
+// 1 - four-square ship
+// make a rule for a ship location
 
 const Ship = (coordinates) => {
   let shipLength = coordinates.length;
   const location = [...coordinates];
+
+  const sameXcb = (value, index, array) => {
+    console.log(value);
+    if (
+      array[index + 1] === undefined ||
+      Math.abs(value[1] - array[index + 1][1]) === 1
+    ) {
+      return true;
+    }
+  };
+
+  const sameYcb = (value, index, array) => {
+    console.log(value);
+    if (
+      array[index + 1] === undefined ||
+      Math.abs(value[0] - array[index + 1][0]) === 1
+    ) {
+      return true;
+    }
+  };
+
+  const checkCoordinates = () => {
+    /*  
+    coordinates: if x is the same then y can only differ by 1
+                 if y is the same then x can only differ by 1
+    */
+    if (coordinates.length === 1) {
+      return true;
+    }
+    // if x is the same....
+    if (coordinates[0][0] === coordinates[1][0]) {
+      return coordinates.every(sameXcb);
+    }
+    // if y is the same...
+    if (coordinates[0][1] === coordinates[1][1]) {
+      return coordinates.every(sameYcb);
+    }
+    return false;
+  };
 
   const isSunk = () => console.log("Ship is sunk!");
 
@@ -14,27 +57,15 @@ const Ship = (coordinates) => {
     }
   };
 
-  return { location, wasHit };
+  return { location, wasHit, checkCoordinates };
 };
 
-const ship1 = Ship([
-  [2, 2],
-  [2, 3],
-]);
-const ship2 = Ship([
-  [2, 5],
-  [2, 6],
-  [2, 7],
-]);
-
-console.log(ship1);
-ship1.wasHit();
-ship1.wasHit();
-
+// gameboard will take ships locations as an array
 const Gameboard = (ship) => {
   const shipsLocations = [];
   const missedShots = [];
   const sunkenShips = [];
+
   // gameboard should have two coordinates X and Y which are represented by numbers
   // from 0 to 9, and look like [0,0], [0,1]... next line [1,0], [1,1]...
   const createBoard = () => {
@@ -53,8 +84,22 @@ const Gameboard = (ship) => {
     // else add it to missedShots
     // if ship is destroyed add it to sunken ships
   };
-  return { createBoard };
+  return { createBoard, shipsLocations };
 };
 
-// const board = Gameboard();
-// console.log(board.createBoard());
+const ship1 = Ship([
+  [2, 2],
+  [1, 2],
+]);
+const ship2 = Ship([
+  [2, 5],
+  [2, 6],
+  [2, 7],
+]);
+
+console.log(ship1.checkCoordinates());
+// ship1.wasHit();
+// ship1.wasHit();
+
+// const board = Gameboard(ship1);
+// console.log(board.shipsLocations);
