@@ -103,17 +103,33 @@ const Gameboard = () => {
     }
     return ship1square;
   };
-  // make checking function universal or adaptive for any type of ship
+  // DONE!//make checking function universal or adaptive for any type of ship
+
+  // const checkOverlaping = (shipArr, square) => {
+  //   if (shipArr.length === 0) {
+  //     return false;
+  //   } else {
+  //     return shipArr[0].some(
+  //       (value) => square[0] === value[0] && square[1] === value[1]
+  //     );
+  //   }
+  // };
   const checkOverlaping = (shipArr, square) => {
+    const result = [];
     if (shipArr.length === 0) {
       return false;
     } else {
-      return shipArr[0].some(
-        (value) => square[0] === value[0] && square[1] === value[1]
-      );
+      // console.log(shipArr);
+      shipArr.forEach((item) => {
+        result.push(
+          item.some((value) => square[0] === value[0] && square[1] === value[1])
+        );
+      });
     }
+    // console.log(result);
+    return result.some((value) => value === true);
   };
-  // calculate neighbours for 3 square ship
+  // calculate neighbours for 3 squares ship
   const calcNeighbourSquares = (firstSquare, dir) => {
     const result = [];
     if (dir === "x") {
@@ -152,8 +168,8 @@ const Gameboard = () => {
   const shipSquares = [];
   const nextToSquares = [];
 
-  const recursiveShips = () => {
-    if (shipSquares.length === 2) {
+  const make3sqShips = () => {
+    if (shipSquares.length === 5) {
       console.log("Ship squares:");
       console.log(shipSquares);
       console.log("Neigbour squares:");
@@ -189,10 +205,10 @@ const Gameboard = () => {
           checkOverlaping(shipSquares, secondSquare) ||
           checkOverlaping(shipSquares, thirdSquare)
         ) {
-          return recursiveShips();
+          return make3sqShips();
         } else {
           shipSquares.push([firstSquare, secondSquare, thirdSquare]);
-          return recursiveShips();
+          return make3sqShips();
         }
       } else {
         // also check for coordinates to do not go over 9 or be less then 0
@@ -213,21 +229,22 @@ const Gameboard = () => {
           checkOverlaping(shipSquares, secondSquare) ||
           checkOverlaping(shipSquares, thirdSquare)
         ) {
-          return recursiveShips();
+          return make3sqShips();
         } else {
           shipSquares.push([firstSquare, secondSquare, thirdSquare]);
-          return recursiveShips();
+          return make3sqShips();
         }
-        // shipSquares.push([firstSquare, secondSquare, thirdSquare]);
       }
     }
   };
+
+  const make4sqShip = () => {};
 
   const put3squareShips = () => {
     // DONE!// 3-square ships x 2
     // DONE!// the existing ship should inlcude a subarray with all the squares around it
     // next checks should be applied to the firstSquare
-    // check for ships to not cross each others
+    // DONE!// check for ships to not cross each others
     // the firstSquare shouldn't be in the existing ship and also shouldn't be next to other ship FUCK
     // the secondSquare and thirdSquare shouldn't be there either
     // maybe take a ship array and its subarray and subtract all the squares from the createBoard function
@@ -318,9 +335,14 @@ const Gameboard = () => {
           const m = [firstSquare[0] - 1, firstSquare[1] - 1];
           neigbourSquares.push([a, b, c, d, e, f, g, h, j, k, l, m]);
         }
+        console.log("Original batch:");
         console.log(checkOverlaping(ship3squares, firstSquare));
         console.log(checkOverlaping(ship3squares, secondSquare));
         console.log(checkOverlaping(ship3squares, thirdSquare));
+        console.log("Testing batch:");
+        console.log(checkOverlaping2(ship3squares, firstSquare));
+        console.log(checkOverlaping2(ship3squares, secondSquare));
+        console.log(checkOverlaping2(ship3squares, thirdSquare));
         ship3squares.push([firstSquare, secondSquare, thirdSquare]);
       } else {
         // also check for coordinates to do not go over 9 and less then 0
@@ -359,9 +381,14 @@ const Gameboard = () => {
           const m = [firstSquare[0] - 1, firstSquare[1] - 1];
           neigbourSquares.push([a, b, c, d, e, f, g, h, j, k, l, m]);
         }
+        console.log("Original batch:");
         console.log(checkOverlaping(ship3squares, firstSquare));
         console.log(checkOverlaping(ship3squares, secondSquare));
         console.log(checkOverlaping(ship3squares, thirdSquare));
+        console.log("Testing batch:");
+        console.log(checkOverlaping2(ship3squares, firstSquare));
+        console.log(checkOverlaping2(ship3squares, secondSquare));
+        console.log(checkOverlaping2(ship3squares, thirdSquare));
         ship3squares.push([firstSquare, secondSquare, thirdSquare]);
       }
     }
@@ -372,6 +399,9 @@ const Gameboard = () => {
     console.log(neigbourSquares);
     return ship3squares;
   };
+  // show an array with created ships
+  const showShips = () => shipSquares;
+
   // const receiveAttack = (coordinates) => {
   // if coordinates in the shipsLocations - mark as hit
   // else add it to missedShots
@@ -379,10 +409,10 @@ const Gameboard = () => {
   // };
   return {
     createBoard,
-    shipsLocations,
     put1squareShips,
     put3squareShips,
-    recursiveShips,
+    make3sqShips,
+    showShips,
   };
 };
 
@@ -399,7 +429,8 @@ const Gameboard = () => {
 const board = Gameboard();
 
 // board.put3squareShips();
-board.recursiveShips();
+board.make3sqShips();
+// console.log(board.showShips());
 // ship1.wasHit();
 // ship1.wasHit();
 
