@@ -105,7 +105,7 @@ const Gameboard = () => {
   };
   // DONE!//make checking function universal or adaptive for any type of ship
   // DONE! // make functions to place 2 squares and 1 squares ships (start placing from the longest)
-  // Do not create neighbour squares subarray for squares that are not on the map
+  // DONE! // Do not create neighbour squares subarray for squares that are not on the map
   // simplify functions to make one universal function to place all the ships
 
   // const checkOverlaping = (shipArr, square) => {
@@ -134,6 +134,47 @@ const Gameboard = () => {
   };
   const shipSquares = [];
   const nextToSquares = [];
+
+  const calcNeighbourSquares1 = (firstSquare) => {
+    const result = [];
+    const a = [firstSquare[0], firstSquare[1] - 1];
+    const b = [firstSquare[0] + 1, firstSquare[1] - 1];
+    const c = [firstSquare[0] + 1, firstSquare[1]];
+    const d = [firstSquare[0] + 1, firstSquare[1] + 1];
+    const e = [firstSquare[0], firstSquare[1] + 1];
+    const f = [firstSquare[0] - 1, firstSquare[1] + 1];
+    const g = [firstSquare[0] - 1, firstSquare[1]];
+    const h = [firstSquare[0] - 1, firstSquare[1] - 1];
+    result.push(a, b, c, d, e, f, g, h);
+    return result;
+  };
+
+  const make1sqShip = () => {
+    if (shipSquares.length === 10) {
+      console.log("Ship squares:");
+      console.log(shipSquares);
+      console.log("Neigbour squares:");
+      console.log(nextToSquares);
+      return shipSquares;
+    } else {
+      // define x,y and the first square of the ship
+      const x = Math.floor(Math.random() * 10);
+      const y = Math.floor(Math.random() * 10);
+      const firstSquare = [x, y];
+      nextToSquares.push(calcNeighbourSquares1(firstSquare));
+      // if some of the squares overlaps the previous ship - repeat from the beginning
+      if (
+        checkOverlaping(shipSquares, firstSquare) ||
+        checkOverlaping(nextToSquares, firstSquare)
+      ) {
+        nextToSquares.pop();
+        return make1sqShip();
+      } else {
+        shipSquares.push([firstSquare]);
+        return make1sqShip();
+      }
+    }
+  };
 
   const calcNeighbourSquares2 = (firstSquare, dir) => {
     const result = [];
@@ -653,6 +694,7 @@ const Gameboard = () => {
     createBoard,
     put1squareShips,
     put3squareShips,
+    make1sqShip,
     make2sqShip,
     make3sqShips,
     make4sqShip,
@@ -676,6 +718,7 @@ const board = Gameboard();
 board.make4sqShip();
 board.make3sqShips();
 board.make2sqShip();
+board.make1sqShip();
 // console.log(board.showShips());
 // ship1.wasHit();
 // ship1.wasHit();
