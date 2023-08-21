@@ -9,89 +9,7 @@
 // 2 - three-square ships
 // 1 - four-square ship
 
-const Ship = (coordinates) => {
-  let shipLength = coordinates.length;
-  const location = [...coordinates];
-  // check if a ship is on the board
-  const isOnTheBoard = () =>
-    coordinates.every((item) => {
-      if (item[0] >= 0 && item[1] >= 0 && item[0] <= 9 && item[1] <= 9) {
-        return true;
-      }
-    });
-
-  // cb functions for checkCoordinates()
-  const sameXcb = (value, index, array) => {
-    console.log(value);
-    if (
-      array[index + 1] === undefined ||
-      Math.abs(value[1] - array[index + 1][1]) === 1
-    ) {
-      return true;
-    }
-  };
-  const sameYcb = (value, index, array) => {
-    console.log(value);
-    if (
-      array[index + 1] === undefined ||
-      Math.abs(value[0] - array[index + 1][0]) === 1
-    ) {
-      return true;
-    }
-  };
-
-  const checkCoordinates = () => {
-    /*  
-    coordinates: if x is the same then y can only differ by 1
-                 if y is the same then x can only differ by 1
-    */
-    if (coordinates.length === 1) {
-      return true;
-    }
-    // if x is the same....
-    if (coordinates[0][0] === coordinates[1][0]) {
-      return coordinates.every(sameXcb);
-    }
-    // if y is the same...
-    if (coordinates[0][1] === coordinates[1][1]) {
-      return coordinates.every(sameYcb);
-    }
-    return false;
-  };
-
-  const isSunk = () => console.log("Ship is sunk!");
-
-  const wasHit = () => {
-    console.log(shipLength);
-    shipLength -= 1;
-    if (shipLength === 0) {
-      isSunk();
-    }
-  };
-
-  return { location, wasHit, checkCoordinates, isOnTheBoard };
-};
-
-// gameboard will take ships locations as an array
-const Gameboard = () => {
-  // const shipsLocations = [];
-  // const missedShots = [];
-  // const sunkenShips = [];
-
-  // gameboard should have two coordinates X and Y which are represented by numbers
-  // from 0 to 9, and look like [0,0], [0,1]... next line [1,0], [1,1]...
-  const createBoard = () => {
-    const board = [];
-    let x = 0;
-    while (x < 10) {
-      for (let y = 0; y < 10; y++) {
-        board.push([x, y]);
-      }
-      x++;
-    }
-    console.log(board);
-    return board;
-  };
+const Ship = () => {
   // put the ships on the board (in random places)
   // DONE! //make checking function universal or adaptive for any type of ship
   // DONE! // make functions to place 2 squares and 1 squares ships (start placing from the longest)
@@ -487,15 +405,52 @@ const Gameboard = () => {
   // show an array with created ships
   const showShips = () => shipSquares;
 
-  // const receiveAttack = (coordinates) => {
-  // if coordinates in the shipsLocations - mark as hit
-  // else add it to missedShots
-  // if ship is destroyed add it to sunken ships
-  // };
+  return { makeShips, showShips };
+};
+
+// gameboard will take ships locations as an array
+const Gameboard = (shipsArr) => {
+  const shipsLocations = shipsArr;
+  const hitShips = [];
+  const sunkenShips = [];
+  const missedShots = [];
+  const createBoard = () => {
+    const board = [];
+    let x = 0;
+    while (x < 10) {
+      for (let y = 0; y < 10; y++) {
+        board.push([x, y]);
+      }
+      x++;
+    }
+    console.log(board);
+    return board;
+  };
+
+  const showShips = () => shipsLocations;
+
+  const receiveAttack = (coordinates) => {
+    shipsLocations.forEach((item) => {
+      if (
+        item.some(
+          (value) => value[0] === coordinates[0] && value[1] === coordinates[1]
+        )
+      ) {
+        if (item.length === 1) {
+          sunkenShips.push(item);
+        }
+        hitShips.push(coordinates);
+        console.log(hitShips);
+        console.log(sunkenShips);
+      } else {
+        return false;
+      }
+    });
+  };
   return {
     createBoard,
     showShips,
-    makeShips,
+    receiveAttack,
   };
 };
 
@@ -509,15 +464,20 @@ const Gameboard = () => {
 //   [2, 7],
 // ]);
 
-const board = Gameboard();
+const ships = Ship();
+const shipsArr = ships.makeShips();
+const board = Gameboard(shipsArr);
+// console.log(shipsArr);
+console.log(board.showShips());
+
+board.receiveAttack([4, 0]);
 
 // board.put3squareShips();
 // board.make4sqShip();
 // board.make3sqShips();
 // board.make2sqShip();
 // board.make1sqShip();
-board.makeShips();
-board.createBoard();
+// board.createBoard();
 // console.log(board.showShips());
 // ship1.wasHit();
 // ship1.wasHit();
