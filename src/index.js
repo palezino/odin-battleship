@@ -410,10 +410,12 @@ const Ship = () => {
 
 // gameboard will take ships locations as an array
 const Gameboard = (shipsArr) => {
+  // DONE! // find out how to record missed shops
   const shipsLocations = shipsArr;
   const hitShips = [];
   const sunkenShips = [];
   const missedShots = [];
+
   const createBoard = () => {
     const board = [];
     let x = 0;
@@ -430,6 +432,7 @@ const Gameboard = (shipsArr) => {
   const showShips = () => shipsLocations;
 
   const receiveAttack = (coordinates) => {
+    const hitArrCopy = [...hitShips];
     shipsLocations.forEach((item) => {
       if (
         item.some(
@@ -440,12 +443,13 @@ const Gameboard = (shipsArr) => {
           sunkenShips.push(item);
         }
         hitShips.push(coordinates);
-        console.log(hitShips);
-        console.log(sunkenShips);
-      } else {
-        return false;
+        console.log("Hit", hitShips);
       }
     });
+    if (hitArrCopy.length === hitShips.length) {
+      missedShots.push(coordinates);
+      console.log("Missed", missedShots);
+    }
   };
   return {
     createBoard,
@@ -468,7 +472,7 @@ const ships = Ship();
 const shipsArr = ships.makeShips();
 const board = Gameboard(shipsArr);
 // console.log(shipsArr);
-console.log(board.showShips());
+// console.log(board.showShips());
 
 board.receiveAttack([4, 0]);
 
