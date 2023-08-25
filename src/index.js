@@ -1,14 +1,10 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable no-use-before-define */
 /* eslint-disable default-case */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-else-return */
 /* eslint-disable array-callback-return */
 /* eslint-disable consistent-return */
-/* eslint-disable no-plusplus */
-// create 4 one-square ships
-// 3 - two-square ships
-// 2 - three-square ships
-// 1 - four-square ship
 
 const Ship = () => {
   // put the ships on the board (in random places)
@@ -395,26 +391,93 @@ const Ship = () => {
       }
     }
   };
+
+  // make ships manually
+  const makeOneShip = (firstSquare, length, dir = "x") => {
+    const ship = [];
+    const x = firstSquare[0];
+    const y = firstSquare[1];
+    let secondSquare;
+    let thirdSquare;
+    let fourthSquare;
+    // how to make 1 square ship?
+    // if (length === 1) {
+    //   nextToSquares.push(calcNeighbourSquares(firstSquare, 1));
+    //   ship.push(firstSquare);
+    // }
+    if (dir === "x") {
+      if (firstSquare[0] < length - 1 || firstSquare[0] < 10 - (length - 1)) {
+        secondSquare = [x + 1, y];
+        thirdSquare = [x + 2, y];
+        fourthSquare = [x + 3, y];
+      } else {
+        console.log("Ship goes out of the gameboard!");
+        return "Ship goes out of the gameboard!";
+      }
+      nextToSquares.push(calcNeighbourSquares(firstSquare, length, dir));
+      ship.push(firstSquare, secondSquare, thirdSquare, fourthSquare);
+      ship.length = length;
+    } else if (dir === "y") {
+      if (firstSquare[1] < length - 1 || firstSquare[1] < 10 - (length - 1)) {
+        secondSquare = [x, y + 1];
+        thirdSquare = [x, y + 2];
+        fourthSquare = [x, y + 3];
+      } else {
+        console.log("Ship goes out of the gameboard!");
+        return "Ship goes out of the gameboard!";
+      }
+      nextToSquares.push(calcNeighbourSquares(firstSquare, length, dir));
+      ship.push(firstSquare, secondSquare, thirdSquare, fourthSquare);
+      ship.length = length;
+    }
+    if (
+      ship.some(
+        (item) =>
+          checkOverlaping(shipSquares, item) ||
+          checkOverlaping(nextToSquares, item)
+      )
+    ) {
+      nextToSquares.pop();
+      console.log("Your ship ovelaps an exisiting ship!");
+      return "Your ship ovelaps an exisiting ship!";
+    } else {
+      shipSquares.push(ship);
+      console.log("Ship is created!");
+      return ship;
+    }
+  };
   // place all the ships
   const makeShips = () => {
     make4sqShip();
     make3sqShips();
     make2sqShip();
     return make1sqShip();
+    // makeOneShip([0, 1], 4, "y");
+    // makeOneShip([9, 7], 3, "y");
+    // makeOneShip([3, 2], 3, "x");
+    // makeOneShip([1, 6], 2, "y");
+    // makeOneShip([6, 9], 2, "x");
+    // makeOneShip([5, 5], 2, "x");
+    // makeOneShip([7, 1], 1);
+    // makeOneShip([3, 7], 1);
+    // makeOneShip([8, 3], 1);
+    // makeOneShip([0, 9], 1);
+    // console.log("Ship squares:");
+    // console.log(shipSquares);
+    // console.log("Neigbour squares:");
+    // console.log(nextToSquares);
   };
 
   // show an array with created ships
   const showShips = () => shipSquares;
 
-  return { makeShips, showShips };
+  return { makeShips, makeOneShip, showShips };
 };
 
 // gameboard will take ships locations as an array
 const Gameboard = (shipsArr) => {
   // DONE! // find out how to record missed shops
-  // define sunken ships
   const shipsLocations = shipsArr;
-  const hitShips = [];
   const sunkenShips = [];
   const missedShots = [];
 
@@ -440,7 +503,7 @@ const Gameboard = (shipsArr) => {
     return arr;
   };
 
-  const hitShips2 = recordShips();
+  const hitShips = recordShips();
   const receiveAttack = (coordinates) => {
     shipsLocations.forEach((item, index) => {
       if (
@@ -449,26 +512,24 @@ const Gameboard = (shipsArr) => {
         )
       ) {
         // record hit ships
-        hitShips2.forEach((element) => {
+        hitShips.forEach((element) => {
           if (element[element.length - 1] === index) {
             element.unshift(coordinates);
           }
         });
         // check if the ship sunk
         if (
-          hitShips2.some(
-            (value) => value[value.length - 2] === value.length - 2
-          )
+          hitShips.some((value) => value[value.length - 2] === value.length - 2)
         ) {
           sunkenShips.push(item);
           console.log("Sunk", sunkenShips);
         }
-        console.log("Hit", hitShips2);
+        console.log("Hit", hitShips);
       }
     });
     // record missing shots
     if (
-      !hitShips2.some(
+      !hitShips.some(
         (value) =>
           value[0][0] === coordinates[0] && value[0][1] === coordinates[1]
       )
@@ -481,7 +542,7 @@ const Gameboard = (shipsArr) => {
     createBoard,
     showShips,
     receiveAttack,
-    hitShips2,
+    hitShips,
   };
 };
 
@@ -489,13 +550,14 @@ const Gameboard = (shipsArr) => {
 
 const ships = Ship();
 const shipsArr = ships.makeShips();
-const board = Gameboard(shipsArr);
-// console.log(board.hitShips2);
+// ships.makeOneShip([1, 1], 4, "x");
+// const board = Gameboard(shipsArr);
+// console.log(board.showShips());
 
-board.receiveAttack([4, 0]);
-board.receiveAttack([3, 0]);
-board.receiveAttack([2, 0]);
-board.receiveAttack([5, 0]);
+// board.receiveAttack([4, 0]);
+// board.receiveAttack([3, 0]);
+// board.receiveAttack([2, 0]);
+// board.receiveAttack([5, 0]);
 
 // board.put3squareShips();
 // board.make4sqShip();
