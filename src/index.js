@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable default-case */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-else-return */
@@ -411,6 +412,7 @@ const Ship = () => {
 // gameboard will take ships locations as an array
 const Gameboard = (shipsArr) => {
   // DONE! // find out how to record missed shops
+  // define sunken ships
   const shipsLocations = shipsArr;
   const hitShips = [];
   const sunkenShips = [];
@@ -430,20 +432,32 @@ const Gameboard = (shipsArr) => {
   };
 
   const showShips = () => shipsLocations;
+  const recordShips = () => {
+    const arr = [];
+    shipsLocations.forEach((item, index) => {
+      arr.push([item.length, index]);
+    });
+    return arr;
+  };
 
+  const hitShips2 = recordShips();
   const receiveAttack = (coordinates) => {
     const hitArrCopy = [...hitShips];
-    shipsLocations.forEach((item) => {
+    shipsLocations.forEach((item, index) => {
       if (
         item.some(
           (value) => value[0] === coordinates[0] && value[1] === coordinates[1]
         )
       ) {
-        if (item.length === 1) {
-          sunkenShips.push(item);
-        }
-        hitShips.push(coordinates);
-        console.log("Hit", hitShips);
+        // hitShips.push(coordinates);
+        // console.log("Hit", hitShips);
+        hitShips2.forEach((element) => {
+          if (element[element.length - 1] === index) {
+            element.unshift(coordinates);
+          }
+        });
+        // hitShips2.push([coordinates, item.length, index]);
+        console.log("Hit", hitShips2);
       }
     });
     if (hitArrCopy.length === hitShips.length) {
@@ -455,26 +469,21 @@ const Gameboard = (shipsArr) => {
     createBoard,
     showShips,
     receiveAttack,
+    hitShips2,
   };
 };
 
-// const ship1 = Ship([
-//   [2, 2],
-//   [1, 2],
-// ]);
-// const ship2 = Ship([
-//   [2, 5],
-//   [2, 6],
-//   [2, 7],
-// ]);
+// create Players that can create ships and attack
 
 const ships = Ship();
 const shipsArr = ships.makeShips();
 const board = Gameboard(shipsArr);
-// console.log(shipsArr);
-// console.log(board.showShips());
+// console.log(board.hitShips2);
 
 board.receiveAttack([4, 0]);
+board.receiveAttack([3, 0]);
+board.receiveAttack([2, 0]);
+board.receiveAttack([5, 0]);
 
 // board.put3squareShips();
 // board.make4sqShip();
