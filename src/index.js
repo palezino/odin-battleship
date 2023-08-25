@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-use-before-define */
 /* eslint-disable default-case */
@@ -22,9 +23,9 @@ const Ship = () => {
   // ON HOLD // try to store ships in an object
 
   const shipSquares = [];
-  const nextToSquares = [];
+  const neighbourSquares = [];
 
-  const checkOverlaping = (shipArr, square) => {
+  const checkOverlapping = (shipArr, square) => {
     const result = [];
     if (shipArr.length === 0) {
       return false;
@@ -111,21 +112,20 @@ const Ship = () => {
       console.log("Ship squares:");
       console.log(shipSquares);
       console.log("Neigbour squares:");
-      console.log(nextToSquares);
+      console.log(neighbourSquares);
       return shipSquares;
     } else {
       // define x,y and the first square of the ship
       const x = Math.floor(Math.random() * 10);
       const y = Math.floor(Math.random() * 10);
       const firstSquare = [x, y];
-      nextToSquares.push(calcNeighbourSquares(firstSquare, 1));
-      // nextToSquares.push(calcNeighbourSquares1(firstSquare));
+      neighbourSquares.push(calcNeighbourSquares(firstSquare, 1));
       // if some of the squares overlaps the previous ship - repeat from the beginning
       if (
-        checkOverlaping(shipSquares, firstSquare) ||
-        checkOverlaping(nextToSquares, firstSquare)
+        checkOverlapping(shipSquares, firstSquare) ||
+        checkOverlapping(neighbourSquares, firstSquare)
       ) {
-        nextToSquares.pop();
+        neighbourSquares.pop();
         return make1sqShip();
       } else {
         shipSquares.push([firstSquare]);
@@ -136,10 +136,6 @@ const Ship = () => {
 
   const make2sqShip = () => {
     if (shipSquares.length === 6) {
-      // console.log("Ship squares:");
-      // console.log(shipSquares);
-      // console.log("Neigbour squares:");
-      // console.log(nextToSquares);
       return shipSquares;
     } else {
       // define x,y and the first square of the ship
@@ -156,63 +152,44 @@ const Ship = () => {
         if ((dirPlusMinus && firstSquare[0] < 1) || firstSquare[0] < 9) {
           secondSquare = [x + 1, y];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(firstSquare, 2, "x"));
-          // nextToSquares.push(calcNeighbourSquares2(firstSquare, "x"));
+          neighbourSquares.push(calcNeighbourSquares(firstSquare, 2, "x"));
         } else {
           secondSquare = [x - 1, y];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(secondSquare, 2, "x"));
-          // nextToSquares.push(calcNeighbourSquares2(secondSquare, "x"));
-        }
-        // if some of the squares overlaps the previous ship - repeat from the beginning
-        if (
-          checkOverlaping(shipSquares, firstSquare) ||
-          checkOverlaping(shipSquares, secondSquare) ||
-          checkOverlaping(nextToSquares, firstSquare) ||
-          checkOverlaping(nextToSquares, secondSquare)
-        ) {
-          nextToSquares.pop();
-          return make2sqShip();
-        } else {
-          shipSquares.push([firstSquare, secondSquare]);
-          return make2sqShip();
+          neighbourSquares.push(calcNeighbourSquares(secondSquare, 2, "x"));
         }
       } else {
         // also check for coordinates to do not go over 9 or be less then 0
         if ((dirPlusMinus && firstSquare[1] < 1) || firstSquare[1] < 9) {
           secondSquare = [x, y + 1];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(firstSquare, 2, "y"));
-          // nextToSquares.push(calcNeighbourSquares2(firstSquare, "y"));
+          neighbourSquares.push(calcNeighbourSquares(firstSquare, 2, "y"));
         } else {
           secondSquare = [x, y - 1];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(secondSquare, 2, "y"));
-          // nextToSquares.push(calcNeighbourSquares2(secondSquare, "y"));
+          neighbourSquares.push(calcNeighbourSquares(secondSquare, 2, "y"));
         }
-        // if some of the squares overlaps the previous ship - repeat from the beginning
-        if (
-          checkOverlaping(shipSquares, firstSquare) ||
-          checkOverlaping(shipSquares, secondSquare) ||
-          checkOverlaping(nextToSquares, firstSquare) ||
-          checkOverlaping(nextToSquares, secondSquare)
-        ) {
-          nextToSquares.pop();
-          return make2sqShip();
-        } else {
-          shipSquares.push([firstSquare, secondSquare]);
-          return make2sqShip();
-        }
+      }
+      // if some of the squares overlaps the previous ship - repeat from the beginning
+      const ship = [...firstSquare, secondSquare];
+      if (
+        ship.some(
+          (item) =>
+            checkOverlapping(shipSquares, item) ||
+            checkOverlapping(neighbourSquares, item)
+        )
+      ) {
+        neighbourSquares.pop();
+        return make2sqShip();
+      } else {
+        shipSquares.push([firstSquare, secondSquare]);
+        return make2sqShip();
       }
     }
   };
 
   const make3sqShips = () => {
     if (shipSquares.length === 3) {
-      // console.log("Ship squares:");
-      // console.log(shipSquares);
-      // console.log("Neigbour squares:");
-      // console.log(nextToSquares);
       return shipSquares;
     } else {
       // define x,y and the first square of the ship
@@ -231,29 +208,12 @@ const Ship = () => {
           secondSquare = [x + 1, y];
           thirdSquare = [x + 2, y];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(firstSquare, 3, "x"));
-          // nextToSquares.push(calcNeighbourSquares3(firstSquare, "x"));
+          neighbourSquares.push(calcNeighbourSquares(firstSquare, 3, "x"));
         } else {
           secondSquare = [x - 1, y];
           thirdSquare = [x - 2, y];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(thirdSquare, 3, "x"));
-          // nextToSquares.push(calcNeighbourSquares3(thirdSquare, "x"));
-        }
-        // if some of the squares overlaps the previous ship - repeat from the beginning
-        if (
-          checkOverlaping(shipSquares, firstSquare) ||
-          checkOverlaping(shipSquares, secondSquare) ||
-          checkOverlaping(shipSquares, thirdSquare) ||
-          checkOverlaping(nextToSquares, firstSquare) ||
-          checkOverlaping(nextToSquares, secondSquare) ||
-          checkOverlaping(nextToSquares, thirdSquare)
-        ) {
-          nextToSquares.pop();
-          return make3sqShips();
-        } else {
-          shipSquares.push([firstSquare, secondSquare, thirdSquare]);
-          return make3sqShips();
+          neighbourSquares.push(calcNeighbourSquares(thirdSquare, 3, "x"));
         }
       } else {
         // also check for coordinates to do not go over 9 or be less then 0
@@ -261,30 +221,33 @@ const Ship = () => {
           secondSquare = [x, y + 1];
           thirdSquare = [x, y + 2];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(firstSquare, 3, "y"));
-          // nextToSquares.push(calcNeighbourSquares3(firstSquare, "y"));
+          neighbourSquares.push(calcNeighbourSquares(firstSquare, 3, "y"));
         } else {
           secondSquare = [x, y - 1];
           thirdSquare = [x, y - 2];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(thirdSquare, 3, "y"));
-          // nextToSquares.push(calcNeighbourSquares3(thirdSquare, "y"));
+          neighbourSquares.push(calcNeighbourSquares(thirdSquare, 3, "y"));
         }
-        // if some of the squares overlaps the previous ship - repeat from the beginning
-        if (
-          checkOverlaping(shipSquares, firstSquare) ||
-          checkOverlaping(shipSquares, secondSquare) ||
-          checkOverlaping(shipSquares, thirdSquare) ||
-          checkOverlaping(nextToSquares, firstSquare) ||
-          checkOverlaping(nextToSquares, secondSquare) ||
-          checkOverlaping(nextToSquares, thirdSquare)
-        ) {
-          nextToSquares.pop();
-          return make3sqShips();
-        } else {
-          shipSquares.push([firstSquare, secondSquare, thirdSquare]);
-          return make3sqShips();
-        }
+      }
+      // if some of the squares overlaps the previous ship - repeat from the beginning
+      const ship = [...firstSquare, secondSquare, thirdSquare];
+      ship.some(
+        (item) =>
+          checkOverlapping(shipSquares, item) ||
+          checkOverlapping(neighbourSquares, item)
+      );
+      if (
+        ship.some(
+          (item) =>
+            checkOverlapping(shipSquares, item) ||
+            checkOverlapping(neighbourSquares, item)
+        )
+      ) {
+        neighbourSquares.pop();
+        return make3sqShips();
+      } else {
+        shipSquares.push([firstSquare, secondSquare, thirdSquare]);
+        return make3sqShips();
       }
     }
   };
@@ -294,7 +257,7 @@ const Ship = () => {
       // console.log("Ship squares:");
       // console.log(shipSquares);
       // console.log("Neigbour squares:");
-      // console.log(nextToSquares);
+      // console.log(neighbourSquares);
       return shipSquares;
     } else {
       // define x,y and the first square of the ship
@@ -315,40 +278,40 @@ const Ship = () => {
           thirdSquare = [x + 2, y];
           fourthSquare = [x + 3, y];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(firstSquare, 4, "x"));
-          // nextToSquares.push(calcNeighbourSquares4(firstSquare, "x"));
+          neighbourSquares.push(calcNeighbourSquares(firstSquare, 4, "x"));
+          // neighbourSquares.push(calcNeighbourSquares4(firstSquare, "x"));
         } else {
           secondSquare = [x - 1, y];
           thirdSquare = [x - 2, y];
           fourthSquare = [x - 3, y];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(fourthSquare, 4, "x"));
-          // nextToSquares.push(calcNeighbourSquares4(fourthSquare, "x"));
+          neighbourSquares.push(calcNeighbourSquares(fourthSquare, 4, "x"));
+          // neighbourSquares.push(calcNeighbourSquares4(fourthSquare, "x"));
         }
         // if some of the squares overlaps the previous ship - repeat from the beginning
         // !! create a variable to store an array of checks
         // check only necessary elements
-        if (
-          checkOverlaping(shipSquares, firstSquare) ||
-          checkOverlaping(shipSquares, secondSquare) ||
-          checkOverlaping(shipSquares, thirdSquare) ||
-          checkOverlaping(shipSquares, fourthSquare) ||
-          checkOverlaping(nextToSquares, firstSquare) ||
-          checkOverlaping(nextToSquares, secondSquare) ||
-          checkOverlaping(nextToSquares, thirdSquare) ||
-          checkOverlaping(nextToSquares, fourthSquare)
-        ) {
-          nextToSquares.pop();
-          return make4sqShip();
-        } else {
-          shipSquares.push([
-            firstSquare,
-            secondSquare,
-            thirdSquare,
-            fourthSquare,
-          ]);
-          return make4sqShip();
-        }
+        // if (
+        //   checkOverlapping(shipSquares, firstSquare) ||
+        //   checkOverlapping(shipSquares, secondSquare) ||
+        //   checkOverlapping(shipSquares, thirdSquare) ||
+        //   checkOverlapping(shipSquares, fourthSquare) ||
+        //   checkOverlapping(neighbourSquares, firstSquare) ||
+        //   checkOverlapping(neighbourSquares, secondSquare) ||
+        //   checkOverlapping(neighbourSquares, thirdSquare) ||
+        //   checkOverlapping(neighbourSquares, fourthSquare)
+        // ) {
+        //   neighbourSquares.pop();
+        //   return make4sqShip();
+        // } else {
+        //   shipSquares.push([
+        //     firstSquare,
+        //     secondSquare,
+        //     thirdSquare,
+        //     fourthSquare,
+        //   ]);
+        //   return make4sqShip();
+        // }
       } else {
         // also check for coordinates to do not go over 9 or be less then 0
         if ((dirPlusMinus && firstSquare[1] < 3) || firstSquare[1] < 7) {
@@ -356,55 +319,60 @@ const Ship = () => {
           thirdSquare = [x, y + 2];
           fourthSquare = [x, y + 3];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(firstSquare, 4, "y"));
-          // nextToSquares.push(calcNeighbourSquares4(firstSquare, "y"));
+          neighbourSquares.push(calcNeighbourSquares(firstSquare, 4, "y"));
+          // neighbourSquares.push(calcNeighbourSquares4(firstSquare, "y"));
         } else {
           secondSquare = [x, y - 1];
           thirdSquare = [x, y - 2];
           fourthSquare = [x, y - 3];
           // calculate all the neighbour squares and push to subarray
-          nextToSquares.push(calcNeighbourSquares(fourthSquare, 4, "y"));
-          // nextToSquares.push(calcNeighbourSquares4(fourthSquare, "y"));
+          neighbourSquares.push(calcNeighbourSquares(fourthSquare, 4, "y"));
+          // neighbourSquares.push(calcNeighbourSquares4(fourthSquare, "y"));
         }
-        // if some of the squares overlaps the previous ship - repeat from the beginning
-        if (
-          checkOverlaping(shipSquares, firstSquare) ||
-          checkOverlaping(shipSquares, secondSquare) ||
-          checkOverlaping(shipSquares, thirdSquare) ||
-          checkOverlaping(shipSquares, fourthSquare) ||
-          checkOverlaping(nextToSquares, firstSquare) ||
-          checkOverlaping(nextToSquares, secondSquare) ||
-          checkOverlaping(nextToSquares, thirdSquare) ||
-          checkOverlaping(nextToSquares, fourthSquare)
-        ) {
-          nextToSquares.pop();
-          return make4sqShip();
-        } else {
-          shipSquares.push([
-            firstSquare,
-            secondSquare,
-            thirdSquare,
-            fourthSquare,
-          ]);
-          return make4sqShip();
-        }
+      }
+      // if some of the squares overlaps the previous ship - repeat from the beginning
+      const ship = [...firstSquare, secondSquare, thirdSquare, fourthSquare];
+      if (
+        // checkOverlapping(shipSquares, firstSquare) ||
+        // checkOverlapping(shipSquares, secondSquare) ||
+        // checkOverlapping(shipSquares, thirdSquare) ||
+        // checkOverlapping(shipSquares, fourthSquare) ||
+        // checkOverlapping(neighbourSquares, firstSquare) ||
+        // checkOverlapping(neighbourSquares, secondSquare) ||
+        // checkOverlapping(neighbourSquares, thirdSquare) ||
+        // checkOverlapping(neighbourSquares, fourthSquare)
+        ship.some(
+          (item) =>
+            checkOverlapping(shipSquares, item) ||
+            checkOverlapping(neighbourSquares, item)
+        )
+      ) {
+        neighbourSquares.pop();
+        return make4sqShip();
+      } else {
+        shipSquares.push([
+          firstSquare,
+          secondSquare,
+          thirdSquare,
+          fourthSquare,
+        ]);
+        return make4sqShip();
       }
     }
   };
 
   // make ships manually
   const makeOneShip = (firstSquare, length, dir = "x") => {
+    if (shipSquares.length === 10) {
+      console.log("Can't create any more ships!");
+      return "Can't create any more ships!";
+    }
     const ship = [];
     const x = firstSquare[0];
     const y = firstSquare[1];
     let secondSquare;
     let thirdSquare;
     let fourthSquare;
-    // how to make 1 square ship?
-    // if (length === 1) {
-    //   nextToSquares.push(calcNeighbourSquares(firstSquare, 1));
-    //   ship.push(firstSquare);
-    // }
     if (dir === "x") {
       if (firstSquare[0] < length - 1 || firstSquare[0] < 10 - (length - 1)) {
         secondSquare = [x + 1, y];
@@ -414,7 +382,7 @@ const Ship = () => {
         console.log("Ship goes out of the gameboard!");
         return "Ship goes out of the gameboard!";
       }
-      nextToSquares.push(calcNeighbourSquares(firstSquare, length, dir));
+      neighbourSquares.push(calcNeighbourSquares(firstSquare, length, dir));
       ship.push(firstSquare, secondSquare, thirdSquare, fourthSquare);
       ship.length = length;
     } else if (dir === "y") {
@@ -426,18 +394,18 @@ const Ship = () => {
         console.log("Ship goes out of the gameboard!");
         return "Ship goes out of the gameboard!";
       }
-      nextToSquares.push(calcNeighbourSquares(firstSquare, length, dir));
+      neighbourSquares.push(calcNeighbourSquares(firstSquare, length, dir));
       ship.push(firstSquare, secondSquare, thirdSquare, fourthSquare);
       ship.length = length;
     }
     if (
       ship.some(
         (item) =>
-          checkOverlaping(shipSquares, item) ||
-          checkOverlaping(nextToSquares, item)
+          checkOverlapping(shipSquares, item) ||
+          checkOverlapping(neighbourSquares, item)
       )
     ) {
-      nextToSquares.pop();
+      neighbourSquares.pop();
       console.log("Your ship ovelaps an exisiting ship!");
       return "Your ship ovelaps an exisiting ship!";
     } else {
@@ -465,7 +433,7 @@ const Ship = () => {
     // console.log("Ship squares:");
     // console.log(shipSquares);
     // console.log("Neigbour squares:");
-    // console.log(nextToSquares);
+    // console.log(neighbourSquares);
   };
 
   // show an array with created ships
@@ -546,7 +514,7 @@ const Gameboard = (shipsArr) => {
   };
 };
 
-// create Players that can create ships and attack
+// create Players that can create ships and attack!!!
 
 const ships = Ship();
 const shipsArr = ships.makeShips();
