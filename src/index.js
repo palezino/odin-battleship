@@ -442,7 +442,6 @@ const Gameboard = (shipsArr) => {
 
   const hitShips2 = recordShips();
   const receiveAttack = (coordinates) => {
-    const hitArrCopy = [...hitShips];
     shipsLocations.forEach((item, index) => {
       if (
         item.some(
@@ -467,9 +466,15 @@ const Gameboard = (shipsArr) => {
         console.log("Hit", hitShips2);
       }
     });
-    if (hitArrCopy.length === hitShips.length) {
+    // record missing shots
+    if (
+      !hitShips2.some(
+        (value) =>
+          value[0][0] === coordinates[0] && value[0][1] === coordinates[1]
+      )
+    ) {
       missedShots.push(coordinates);
-      // console.log("Missed", missedShots);
+      console.log("Missed", missedShots);
     }
   };
   return {
