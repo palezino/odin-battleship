@@ -449,20 +449,27 @@ const Gameboard = (shipsArr) => {
           (value) => value[0] === coordinates[0] && value[1] === coordinates[1]
         )
       ) {
-        // hitShips.push(coordinates);
-        // console.log("Hit", hitShips);
+        // record hit ships
         hitShips2.forEach((element) => {
           if (element[element.length - 1] === index) {
             element.unshift(coordinates);
           }
         });
-        // hitShips2.push([coordinates, item.length, index]);
+        // check if the ship sunk
+        if (
+          hitShips2.some(
+            (value) => value[value.length - 2] === value.length - 2
+          )
+        ) {
+          sunkenShips.push(item);
+          console.log("Sunk", sunkenShips);
+        }
         console.log("Hit", hitShips2);
       }
     });
     if (hitArrCopy.length === hitShips.length) {
       missedShots.push(coordinates);
-      console.log("Missed", missedShots);
+      // console.log("Missed", missedShots);
     }
   };
   return {
