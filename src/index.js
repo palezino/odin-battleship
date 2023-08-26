@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable no-lonely-if */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-use-before-define */
@@ -361,11 +362,71 @@ const Ship = () => {
     }
   };
 
+  const checkShipsNum = (length) => {
+    let count = 0;
+    switch (length) {
+      case 4:
+        if (shipSquares.length === 0) {
+          // console.log("here");
+          break;
+        }
+        shipSquares.forEach((item) => {
+          if (item.length === 4) {
+            count++;
+          }
+        });
+        // console.log("count", count);
+        if (count >= 1) {
+          console.log("You only can have one 4-square ship!");
+          return false;
+        }
+        break;
+      case 3:
+        shipSquares.forEach((item) => {
+          if (item.length === 3) {
+            count++;
+          }
+        });
+        if (count >= 2) {
+          console.log("You only can have two 3-square ships!");
+          return false;
+        }
+        break;
+      case 2:
+        shipSquares.forEach((item) => {
+          if (item.length === 2) {
+            count++;
+          }
+        });
+        if (count >= 3) {
+          console.log("You only can have three 2-square ships!");
+          return false;
+        }
+        break;
+      case 1:
+        shipSquares.forEach((item) => {
+          if (item.length === 1) {
+            count++;
+          }
+        });
+        if (count >= 4) {
+          console.log("You only can have four 1-square ships!");
+          return false;
+        }
+        break;
+    }
+    return true;
+  };
+
   // make ships manually
-  const makeOneShip = (firstSquare, length, dir = "x") => {
+  const makeShip = (firstSquare, length, dir = "x") => {
     if (shipSquares.length === 10) {
       console.log("Can't create any more ships!");
-      return "Can't create any more ships!";
+      return false;
+    }
+    // console.log("Ship length", checkShipsNum(length));
+    if (!checkShipsNum(length)) {
+      return false;
     }
     const ship = [];
     const x = firstSquare[0];
@@ -380,7 +441,7 @@ const Ship = () => {
         fourthSquare = [x + 3, y];
       } else {
         console.log("Ship goes out of the gameboard!");
-        return "Ship goes out of the gameboard!";
+        return false;
       }
       neighbourSquares.push(calcNeighbourSquares(firstSquare, length, dir));
       ship.push(firstSquare, secondSquare, thirdSquare, fourthSquare);
@@ -392,7 +453,7 @@ const Ship = () => {
         fourthSquare = [x, y + 3];
       } else {
         console.log("Ship goes out of the gameboard!");
-        return "Ship goes out of the gameboard!";
+        return false;
       }
       neighbourSquares.push(calcNeighbourSquares(firstSquare, length, dir));
       ship.push(firstSquare, secondSquare, thirdSquare, fourthSquare);
@@ -407,11 +468,11 @@ const Ship = () => {
     ) {
       neighbourSquares.pop();
       console.log("Your ship ovelaps an exisiting ship!");
-      return "Your ship ovelaps an exisiting ship!";
+      return false;
     } else {
       shipSquares.push(ship);
       console.log("Ship is created!");
-      return ship;
+      return true;
     }
   };
   // place all the ships
@@ -420,16 +481,18 @@ const Ship = () => {
     make3sqShips();
     make2sqShip();
     return make1sqShip();
-    // makeOneShip([0, 1], 4, "y");
-    // makeOneShip([9, 7], 3, "y");
-    // makeOneShip([3, 2], 3, "x");
-    // makeOneShip([1, 6], 2, "y");
-    // makeOneShip([6, 9], 2, "x");
-    // makeOneShip([5, 5], 2, "x");
-    // makeOneShip([7, 1], 1);
-    // makeOneShip([3, 7], 1);
-    // makeOneShip([8, 3], 1);
-    // makeOneShip([0, 9], 1);
+    // makeShip([7, 2], 4, "y");
+    // makeShip([2, 9], 4, "x");
+    // makeShip([0, 1], 4, "y");
+    // makeShip([9, 7], 3, "y");
+    // makeShip([3, 2], 3, "x");
+    // makeShip([1, 6], 2, "y");
+    // makeShip([6, 9], 2, "x");
+    // makeShip([5, 5], 2, "x");
+    // makeShip([7, 1], 1);
+    // makeShip([3, 7], 1);
+    // makeShip([8, 3], 1);
+    // makeShip([0, 9], 1);
     // console.log("Ship squares:");
     // console.log(shipSquares);
     // console.log("Neigbour squares:");
@@ -439,7 +502,7 @@ const Ship = () => {
   // show an array with created ships
   const showShips = () => shipSquares;
 
-  return { makeShips, makeOneShip, showShips };
+  return { makeShips, makeShip, showShips, shipSquares };
 };
 
 // gameboard will take ships locations as an array
@@ -515,10 +578,86 @@ const Gameboard = (shipsArr) => {
 };
 
 // create Players that can create ships and attack!!!
+// use prompt() to make ships and attacks
+const Player = (name) => {
+  const getName = () => name;
 
-const ships = Ship();
-const shipsArr = ships.makeShips();
-// ships.makeOneShip([1, 1], 4, "x");
+  // help function to createShips()
+  const defineLength = (shipsArr) => {
+    if (shipsArr.length < 1) {
+      return 4;
+    } else if (shipsArr.length >= 1 && shipsArr.length < 3) {
+      return 3;
+    } else if (shipsArr.length >= 3 && shipsArr.length < 6) {
+      return 2;
+    } else if (shipsArr.length >= 6 && shipsArr.length <= 10) {
+      return 1;
+    }
+  };
+
+  const createShips = () => {
+    // the execution will follow the following steps:
+    // - explain that we start with one 4-squares ship, the two 3-squares ship etc.
+    // - input (or choose on the board) the start point of the ship
+    // - choose a direction
+    // - display all the problems if the ship's location is not correct (overlapping, going off the board)
+    // - place a ship
+    const shipFactory = Ship();
+    const shipsArr = shipFactory.shipSquares;
+    console.log(
+      "Let's create your ships.\nThe total amount of ships should be 10 ships.\n",
+      "One - 4-square ship.\nTwo - 3-square ships.\nThree - 2-square ships.\nFour - 1-square ships.\n",
+      "We will follow the above order to create your ships.\n We start with 4-square then 3-square etc."
+    );
+    // determine the length inside the function
+    // don't prompt the direction if 1-square is being created
+    while (shipsArr.length < 10) {
+      const length = defineLength(shipsArr);
+      let firstSquare = prompt(
+        `Please, choose the first square of your ${length}-square ship`,
+        "[0,0]"
+      );
+      firstSquare = [firstSquare[1], firstSquare[3]];
+      // const length = +prompt(
+      //   "Choose the length of your ships",
+      //   "we advise you to start with 4"
+      // );
+      let dir;
+      if (length !== 1) {
+        dir = prompt(
+          "Choose the direction",
+          "print x(across) or y(down)"
+        ).toLowerCase();
+      } else {
+        dir = "x";
+      }
+      if (shipFactory.makeShip(firstSquare, length, dir)) {
+        // console.log("Ship is created!");
+        // console.log(shipFactory.showShips());
+        console.log("Done!");
+      } else {
+        console.log("Please, try to change coordinates!");
+      }
+    }
+    console.log(shipFactory.showShips);
+  };
+
+  const attack = (coordinates) => {
+    // the execution will follow the following steps:
+    // - choose coordinates and execute attack of the other player's ships
+    // - display the status of the attack (missed, hit, sunk)
+  };
+
+  return { getName, createShips };
+};
+
+const player1 = Player("Joe");
+player1.createShips();
+
+// const ships = Ship();
+// const shipsArr = ships.makeShips();
+// console.log(ships.shipSquares);
+// ships.makeShip([1, 1], 4, "x");
 // const board = Gameboard(shipsArr);
 // console.log(board.showShips());
 
