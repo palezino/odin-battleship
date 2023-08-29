@@ -476,7 +476,7 @@ const Ship = () => {
     }
   };
   // place all the ships
-  const makeShips = () => {
+  const autoMakeShips = () => {
     make4sqShip();
     make3sqShips();
     make2sqShip();
@@ -502,7 +502,7 @@ const Ship = () => {
   // show an array with created ships
   const showShips = () => shipSquares;
 
-  return { makeShips, makeShip, showShips, shipSquares };
+  return { autoMakeShips, makeShip, showShips, shipSquares };
 };
 
 // gameboard will take ships locations as an array
@@ -525,7 +525,7 @@ const Gameboard = (shipsArr) => {
     return board;
   };
 
-  const showShips = () => shipsLocations;
+  // const showShips = () => shipsLocations;
   const recordShips = () => {
     const arr = [];
     shipsLocations.forEach((item, index) => {
@@ -535,6 +535,7 @@ const Gameboard = (shipsArr) => {
   };
 
   const hitShips = recordShips();
+
   const receiveAttack = (coordinates) => {
     shipsLocations.forEach((item, index) => {
       if (
@@ -571,18 +572,23 @@ const Gameboard = (shipsArr) => {
   };
   return {
     createBoard,
-    showShips,
     receiveAttack,
+    shipsLocations,
     hitShips,
+    missedShots,
+    sunkenShips,
   };
 };
 
-// create Players that can create ships and attack!!!
-// use prompt() to make ships and attacks
+// DONE! // create second player
+// DONE! // record your own ships
+// DONE! // attack each other ships
+// DONE! // record missed/hit shots and sunk ships
 const Player = (name) => {
   const getName = () => name;
+  const myShips = [];
 
-  // help function to createShips()
+  // help-function to createShips()
   const defineLength = (shipsArr) => {
     if (shipsArr.length < 1) {
       return 4;
@@ -602,45 +608,54 @@ const Player = (name) => {
     // - choose a direction
     // - display all the problems if the ship's location is not correct (overlapping, going off the board)
     // - place a ship
+
     const shipFactory = Ship();
     const shipsArr = shipFactory.shipSquares;
-    console.log(
-      "Let's create your ships.\nThe total amount of ships should be 10 ships.\n",
-      "One - 4-square ship.\nTwo - 3-square ships.\nThree - 2-square ships.\nFour - 1-square ships.\n",
-      "We will follow the above order to create your ships.\n We start with 4-square then 3-square etc."
+    const randomShips = prompt(
+      "Do you want to place ships automatically?",
+      "yes or no"
     );
-    // determine the length inside the function
-    // don't prompt the direction if 1-square is being created
-    while (shipsArr.length < 10) {
-      const length = defineLength(shipsArr);
-      let firstSquare = prompt(
-        `Please, choose the first square of your ${length}-square ship`,
-        "[0,0]"
+    if (randomShips === "yes") {
+      shipFactory.autoMakeShips();
+      // console.log(shipFactory.showShips());
+    } else {
+      console.log(
+        "Let's create your ships.\nThe total amount of ships should be 10 ships.\nOne - 4-square ship.\nTwo - 3-square ships.\nThree - 2-square ships.\nFour - 1-square ships.\nWe will follow the above order to create your ships.\n We start with 4-square then 3-square etc."
       );
-      firstSquare = [firstSquare[1], firstSquare[3]];
-      // const length = +prompt(
-      //   "Choose the length of your ships",
-      //   "we advise you to start with 4"
-      // );
-      let dir;
-      if (length !== 1) {
-        dir = prompt(
-          "Choose the direction",
-          "print x(across) or y(down)"
-        ).toLowerCase();
-      } else {
-        dir = "x";
+      while (shipsArr.length < 10) {
+        const length = defineLength(shipsArr);
+        let firstSquare = prompt(
+          `Please, choose the first square of your ${length}-square ship`,
+          "[0,0]"
+        );
+        firstSquare = [+firstSquare[1], +firstSquare[3]];
+        let dir;
+        if (length !== 1) {
+          dir = prompt(
+            "Choose the direction",
+            "print x(across) or y(down)"
+          ).toLowerCase();
+        } else {
+          dir = "x";
+        }
+        if (shipFactory.makeShip(firstSquare, length, dir)) {
+          console.log("Done!");
+          console.log(shipFactory.showShips());
+        } else {
+          console.log("Please, try to change coordinates!");
+        }
       }
-      if (shipFactory.makeShip(firstSquare, length, dir)) {
-        // console.log("Ship is created!");
-        // console.log(shipFactory.showShips());
-        console.log("Done!");
-      } else {
-        console.log("Please, try to change coordinates!");
-      }
+      console.log(shipFactory.showShips());
     }
-    console.log(shipFactory.showShips);
+    // save all the created ships
+    shipFactory.showShips().forEach((item) => myShips.push(item));
   };
+
+  // const myBoard = Gameboard(myShips);
+
+  // const showMissedShots = () => myBoard.missedShots;
+  // const showHitShips = () => myBoard.hitShips;
+  // const showSunkenShips = () => myBoard.sunkenShips;
 
   const attack = (coordinates) => {
     // the execution will follow the following steps:
@@ -648,23 +663,40 @@ const Player = (name) => {
     // - display the status of the attack (missed, hit, sunk)
   };
 
-  return { getName, createShips };
+  return {
+    getName,
+    createShips,
+    // showMissedShots,
+    // showHitShips,
+    // showSunkenShips,
+    myShips,
+  };
 };
 
 const player1 = Player("Joe");
-player1.createShips();
+const player2 = Player("Ana");
+// player1.createShips();
+// const board1 = Gameboard(player1.myShips);
+// console.log("Player1 ships", board1.shipsLocations);
+// player2.createShips();
+// const board2 = Gameboard(player2.myShips);
+// console.log("Player2 ships", board2.shipsLocations);
+
+// board1.receiveAttack([4, 0]);
+// board2.receiveAttack([2, 4]);
+// board1.receiveAttack([8, 7]);
+// board2.receiveAttack([4, 2]);
+// board1.receiveAttack([5, 0]);
+// board2.receiveAttack([5, 0]);
+// board1.receiveAttack([9, 9]);
+// board2.receiveAttack([0, 0]);
 
 // const ships = Ship();
-// const shipsArr = ships.makeShips();
+// const shipsArr = ships.autoMakeShips();
 // console.log(ships.shipSquares);
 // ships.makeShip([1, 1], 4, "x");
 // const board = Gameboard(shipsArr);
 // console.log(board.showShips());
-
-// board.receiveAttack([4, 0]);
-// board.receiveAttack([3, 0]);
-// board.receiveAttack([2, 0]);
-// board.receiveAttack([5, 0]);
 
 // board.put3squareShips();
 // board.make4sqShip();
