@@ -526,37 +526,53 @@ const Gameboard = (shipsArr) => {
   };
 
   // const showShips = () => shipsLocations;
-  const recordShips = () => {
+  const arrangeShips = () => {
     const arr = [];
     shipsLocations.forEach((item, index) => {
       arr.push([item.length, index]);
     });
+    // console.log(arr);
     return arr;
   };
 
-  const hitShips = recordShips();
+  const hitShips = arrangeShips();
+  const isHit = (ship, coordinates) =>
+    ship.some(
+      (value) => value[0] === coordinates[0] && value[1] === coordinates[1]
+    );
+
+  const isSunk = () =>
+    hitShips.some((value) => value[value.length - 2] === value.length - 2);
+  const recordHit = (index, coordinates) => {
+    hitShips.forEach((element) => {
+      if (element[element.length - 1] === index) {
+        element.unshift(coordinates);
+      }
+    });
+  };
 
   const receiveAttack = (coordinates) => {
     shipsLocations.forEach((item, index) => {
-      if (
-        item.some(
-          (value) => value[0] === coordinates[0] && value[1] === coordinates[1]
-        )
-      ) {
+      if (isHit(item, coordinates)) {
         // record hit ships
-        hitShips.forEach((element) => {
-          if (element[element.length - 1] === index) {
-            element.unshift(coordinates);
-          }
-        });
+        // hitShips.forEach((element) => {
+        //   if (element[element.length - 1] === index) {
+        //     element.unshift(coordinates);
+        //   }
+        // });
+        recordHit(index, coordinates);
+
         // check if the ship sunk
         if (
-          hitShips.some((value) => value[value.length - 2] === value.length - 2)
+          // hitShips.some((value) => value[value.length - 2] === value.length - 2)
+          isSunk()
         ) {
           sunkenShips.push(item);
           console.log("Sunk", sunkenShips);
+          // return "Sunk";
         }
         console.log("Hit", hitShips);
+        // return "Hit";
       }
     });
     // record missing shots
@@ -568,6 +584,11 @@ const Gameboard = (shipsArr) => {
     ) {
       missedShots.push(coordinates);
       console.log("Missed", missedShots);
+      return "Missed";
+    } else if (isSunk()) {
+      return "Sunk";
+    } else {
+      return "Hit";
     }
   };
   return {
@@ -584,6 +605,7 @@ const Gameboard = (shipsArr) => {
 // DONE! // record your own ships
 // DONE! // attack each other ships
 // DONE! // record missed/hit shots and sunk ships
+// Repeat Grid and start working on UI
 const Player = (name) => {
   const getName = () => name;
   const myShips = [];
@@ -682,7 +704,8 @@ const player2 = Player("Ana");
 // const board2 = Gameboard(player2.myShips);
 // console.log("Player2 ships", board2.shipsLocations);
 
-// board1.receiveAttack([4, 0]);
+// board1.receiveAttack([4, 0])
+
 // board2.receiveAttack([2, 4]);
 // board1.receiveAttack([8, 7]);
 // board2.receiveAttack([4, 2]);
@@ -710,3 +733,5 @@ const player2 = Player("Ana");
 
 // const board = Gameboard(ship1);
 // console.log(board.shipsLocations);
+
+export { Ship, Gameboard };
