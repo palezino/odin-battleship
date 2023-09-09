@@ -31,7 +31,7 @@ const Ship = () => {
     if (shipArr.length === 0) {
       return false;
     } else {
-      // console.log(shipArr);
+      // console.log(square);
       shipArr.forEach((item) => {
         result.push(
           item.some((value) => square[0] === value[0] && square[1] === value[1])
@@ -172,7 +172,8 @@ const Ship = () => {
         }
       }
       // if some of the squares overlaps the previous ship - repeat from the beginning
-      const ship = [...firstSquare, secondSquare];
+      const ship = [];
+      ship.push(firstSquare, secondSquare);
       if (
         ship.some(
           (item) =>
@@ -231,12 +232,16 @@ const Ship = () => {
         }
       }
       // if some of the squares overlaps the previous ship - repeat from the beginning
-      const ship = [...firstSquare, secondSquare, thirdSquare];
-      ship.some(
-        (item) =>
-          checkOverlapping(shipSquares, item) ||
-          checkOverlapping(neighbourSquares, item)
-      );
+      const ship = [];
+      ship.push(firstSquare, secondSquare, thirdSquare);
+      // console.log(ship);
+      // console.log(
+      //   ship.some(
+      //     (item) =>
+      //       checkOverlapping(shipSquares, item) ||
+      //       checkOverlapping(neighbourSquares, item)
+      //   )
+      // );
       if (
         ship.some(
           (item) =>
@@ -244,6 +249,10 @@ const Ship = () => {
             checkOverlapping(neighbourSquares, item)
         )
       ) {
+        // console.log("Ship squares:");
+        // console.log(shipSquares);
+        // console.log("Neigbour squares:");
+        // console.log(neighbourSquares);
         neighbourSquares.pop();
         return make3sqShips();
       } else {
@@ -332,7 +341,8 @@ const Ship = () => {
         }
       }
       // if some of the squares overlaps the previous ship - repeat from the beginning
-      const ship = [...firstSquare, secondSquare, thirdSquare, fourthSquare];
+      const ship = [];
+      ship.push(firstSquare, secondSquare, thirdSquare, fourthSquare);
       if (
         // checkOverlapping(shipSquares, firstSquare) ||
         // checkOverlapping(shipSquares, secondSquare) ||
@@ -635,7 +645,7 @@ const Player = (name) => {
     const shipsArr = shipFactory.shipSquares;
     const randomShips = prompt(
       "Do you want to place ships automatically?",
-      "yes or no"
+      "yes"
     );
     if (randomShips === "yes") {
       shipFactory.autoMakeShips();
@@ -679,11 +689,11 @@ const Player = (name) => {
   // const showHitShips = () => myBoard.hitShips;
   // const showSunkenShips = () => myBoard.sunkenShips;
 
-  const attack = (coordinates) => {
-    // the execution will follow the following steps:
-    // - choose coordinates and execute attack of the other player's ships
-    // - display the status of the attack (missed, hit, sunk)
-  };
+  // const attack = (coordinates) => {
+  // the execution will follow the following steps:
+  // - choose coordinates and execute attack of the other player's ships
+  // - display the status of the attack (missed, hit, sunk)
+  // };
 
   return {
     getName,
@@ -695,8 +705,31 @@ const Player = (name) => {
   };
 };
 
-const player1 = Player("Joe");
-const player2 = Player("Ana");
+// DOM manipulaitons
+const placeShipsBtn = document.querySelector(".place-ships-btn");
+const boardCells = document.querySelectorAll(".board-cell");
+placeShipsBtn.addEventListener("click", () => {
+  const player1 = Player("Joe");
+  player1.createShips();
+  // console.log(boardCells[0].dataset.x);
+  // console.log(player1.myShips[0][0][0]);
+  player1.myShips.forEach((item) => {
+    item.forEach((value) => {
+      boardCells.forEach((element) => {
+        if (
+          +element.dataset.x === value[0] &&
+          +element.dataset.y === value[1]
+        ) {
+          element.classList.add("ship");
+        }
+      });
+    });
+  });
+});
+
+// create a player > create ships
+// const player1 = Player("Joe");
+// const player2 = Player("Ana");
 // player1.createShips();
 // const board1 = Gameboard(player1.myShips);
 // console.log("Player1 ships", board1.shipsLocations);
