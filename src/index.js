@@ -517,7 +517,6 @@ const Ship = () => {
 
 // gameboard will take ships locations as an array
 const Gameboard = (shipsArr) => {
-  // DONE! // find out how to record missed shops
   const shipsLocations = shipsArr;
   const sunkenShips = [];
   const missedShots = [];
@@ -565,13 +564,7 @@ const Gameboard = (shipsArr) => {
     shipsLocations.forEach((item, index) => {
       if (isHit(item, coordinates)) {
         // record hit ships
-        // hitShips.forEach((element) => {
-        //   if (element[element.length - 1] === index) {
-        //     element.unshift(coordinates);
-        //   }
-        // });
         recordHit(index, coordinates);
-
         // check if the ship sunk
         if (
           // hitShips.some((value) => value[value.length - 2] === value.length - 2)
@@ -611,11 +604,6 @@ const Gameboard = (shipsArr) => {
   };
 };
 
-// DONE! // create second player
-// DONE! // record your own ships
-// DONE! // attack each other ships
-// DONE! // record missed/hit shots and sunk ships
-// Repeat Grid and start working on UI
 const Player = (name) => {
   const getName = () => name;
   const myShips = [];
@@ -683,39 +671,24 @@ const Player = (name) => {
     shipFactory.showShips().forEach((item) => myShips.push(item));
   };
 
-  // const myBoard = Gameboard(myShips);
-
-  // const showMissedShots = () => myBoard.missedShots;
-  // const showHitShips = () => myBoard.hitShips;
-  // const showSunkenShips = () => myBoard.sunkenShips;
-
-  // const attack = (coordinates) => {
-  // the execution will follow the following steps:
-  // - choose coordinates and execute attack of the other player's ships
-  // - display the status of the attack (missed, hit, sunk)
-  // };
-
   return {
     getName,
     createShips,
-    // showMissedShots,
-    // showHitShips,
-    // showSunkenShips,
     myShips,
   };
 };
 
 // DOM manipulaitons
+// DONE!! // place ships on the board
+// DONE!! // Make the second board
 const placeShipsBtn = document.querySelector(".place-ships-btn");
-const boardCells = document.querySelectorAll(".board-cell");
+const boardCells1 = document.querySelectorAll(".board-cell-1");
 placeShipsBtn.addEventListener("click", () => {
   const player1 = Player("Joe");
   player1.createShips();
-  // console.log(boardCells[0].dataset.x);
-  // console.log(player1.myShips[0][0][0]);
   player1.myShips.forEach((item) => {
     item.forEach((value) => {
-      boardCells.forEach((element) => {
+      boardCells1.forEach((element) => {
         if (
           +element.dataset.x === value[0] &&
           +element.dataset.y === value[1]
