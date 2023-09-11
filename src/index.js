@@ -604,8 +604,8 @@ const Gameboard = (shipsArr) => {
   };
 };
 
-const Player = (name) => {
-  const getName = () => name;
+const Player = () => {
+  // const getName = () => name;
   const myShips = [];
 
   // help-function to createShips()
@@ -672,7 +672,7 @@ const Player = (name) => {
   };
 
   return {
-    getName,
+    // getName,
     createShips,
     myShips,
   };
@@ -681,22 +681,67 @@ const Player = (name) => {
 // DOM manipulaitons
 // DONE!! // place ships on the board
 // DONE!! // Make the second board
+// Each player places ships
+// add buttons Hide ships and Show ships - make them work
+// Create a screen to change players
+// Players attack each other and record hits or missing shots
 const placeShipsBtn = document.querySelector(".place-ships-btn");
 const boardCells1 = document.querySelectorAll(".board-cell-1");
+const playerStatus = document.querySelector(".player-status");
+const boardCellsShips = [];
+
+// console.log(playerStatus.innerText[0]);
 placeShipsBtn.addEventListener("click", () => {
-  const player1 = Player("Joe");
-  player1.createShips();
-  player1.myShips.forEach((item) => {
-    item.forEach((value) => {
-      boardCells1.forEach((element) => {
-        if (
-          +element.dataset.x === value[0] &&
-          +element.dataset.y === value[1]
-        ) {
-          element.classList.add("ship");
-        }
+  if (playerStatus.innerText === "Player-1 plays") {
+    const player1 = Player();
+    player1.createShips();
+    player1.myShips.forEach((item) => {
+      item.forEach((value) => {
+        boardCells1.forEach((element, index) => {
+          if (
+            +element.dataset.x === value[0] &&
+            +element.dataset.y === value[1]
+          ) {
+            element.classList.add("ship");
+            boardCellsShips.push(index);
+          }
+        });
       });
     });
+    // playerStatus.innerText = "Player-2 plays";
+  } else {
+    const player2 = Player();
+    player2.createShips();
+    player2.myShips.forEach((item) => {
+      item.forEach((value) => {
+        boardCells1.forEach((element) => {
+          if (
+            +element.dataset.x === value[0] &&
+            +element.dataset.y === value[1]
+          ) {
+            element.classList.add("ship");
+          }
+        });
+      });
+    });
+  }
+  // console.log(boardCellsShips);
+});
+
+// hide ships
+const hideShipsBtn = document.querySelector(".hide-ships");
+hideShipsBtn.addEventListener("click", () => {
+  boardCells1.forEach((item) => {
+    if (item.classList.contains("ship")) {
+      item.classList.remove("ship");
+    }
+  });
+});
+// show existing ships
+const showShipsBtn = document.querySelector(".show-ships");
+showShipsBtn.addEventListener("click", () => {
+  boardCellsShips.forEach((item) => {
+    boardCells1[item].classList.add("ship");
   });
 });
 
