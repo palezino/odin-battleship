@@ -681,14 +681,22 @@ const Player = () => {
 // DOM manipulaitons
 // DONE!! // place ships on the board
 // DONE!! // Make the second board
+// DONE!! // add buttons Hide ships and Show ships - make them work
 // Each player places ships
-// add buttons Hide ships and Show ships - make them work
 // Create a screen to change players
 // Players attack each other and record hits or missing shots
+const playerStatus = document.querySelector(".player-status");
+const changeStatus = () => {
+  if (playerStatus.innerText === "Player-1 plays") {
+    playerStatus.innerText = "Player-2 plays";
+  } else if (playerStatus.innerText === "Player-2 plays") {
+    playerStatus.innerText = "Player-1 plays";
+  }
+};
 const placeShipsBtn = document.querySelector(".place-ships-btn");
 const boardCells1 = document.querySelectorAll(".board-cell-1");
-const playerStatus = document.querySelector(".player-status");
-const boardCellsShips = [];
+const boardCellsShips1 = [];
+const boardCellsShips2 = [];
 
 // console.log(playerStatus.innerText[0]);
 placeShipsBtn.addEventListener("click", () => {
@@ -703,46 +711,63 @@ placeShipsBtn.addEventListener("click", () => {
             +element.dataset.y === value[1]
           ) {
             element.classList.add("ship");
-            boardCellsShips.push(index);
+            boardCellsShips1.push(index);
           }
         });
       });
     });
     // playerStatus.innerText = "Player-2 plays";
-  } else {
+  } else if (playerStatus.innerText === "Player-2 plays") {
     const player2 = Player();
     player2.createShips();
     player2.myShips.forEach((item) => {
       item.forEach((value) => {
-        boardCells1.forEach((element) => {
+        boardCells1.forEach((element, index) => {
           if (
             +element.dataset.x === value[0] &&
             +element.dataset.y === value[1]
           ) {
             element.classList.add("ship");
+            boardCellsShips2.push(index);
           }
         });
       });
     });
   }
-  // console.log(boardCellsShips);
+  if (boardCellsShips1.length > 0 && boardCellsShips2.length > 0) {
+    placeShipsBtn.style.display = "none";
+  }
+  // console.log(boardCellsShips1);
 });
 
 // hide ships
-const hideShipsBtn = document.querySelector(".hide-ships");
-hideShipsBtn.addEventListener("click", () => {
+const hideShips = () => {
   boardCells1.forEach((item) => {
     if (item.classList.contains("ship")) {
       item.classList.remove("ship");
     }
   });
-});
+};
+const hideShipsBtn = document.querySelector(".hide-ships");
+hideShipsBtn.addEventListener("click", hideShips);
 // show existing ships
 const showShipsBtn = document.querySelector(".show-ships");
 showShipsBtn.addEventListener("click", () => {
-  boardCellsShips.forEach((item) => {
-    boardCells1[item].classList.add("ship");
-  });
+  if (playerStatus.innerText === "Player-1 plays") {
+    boardCellsShips1.forEach((item) => {
+      boardCells1[item].classList.add("ship");
+    });
+  } else if (playerStatus.innerText === "Player-2 plays") {
+    boardCellsShips2.forEach((item) => {
+      boardCells1[item].classList.add("ship");
+    });
+  }
+});
+// change turn
+const changeTurnBtn = document.querySelector(".change-turn-btn");
+changeTurnBtn.addEventListener("click", () => {
+  changeStatus();
+  hideShips();
 });
 
 // create a player > create ships
