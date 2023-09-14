@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-alert */
 /* eslint-disable no-lonely-if */
 /* eslint-disable no-plusplus */
@@ -520,6 +521,18 @@ const Gameboard = (shipsArr) => {
   const shipsLocations = shipsArr;
   const sunkenShips = [];
   const missedShots = [];
+  const hitShipsReg = [
+    [4, 0],
+    [3, 1],
+    [3, 2],
+    [2, 3],
+    [2, 4],
+    [2, 5],
+    [1, 6],
+    [1, 7],
+    [1, 8],
+    [1, 9],
+  ];
 
   const createBoard = () => {
     const board = [];
@@ -535,25 +548,24 @@ const Gameboard = (shipsArr) => {
   };
 
   // const showShips = () => shipsLocations;
-  const arrangeShips = () => {
-    const arr = [];
-    shipsLocations.forEach((item, index) => {
-      arr.push([item.length, index]);
-    });
-    // console.log(arr);
-    return arr;
-  };
+  // const arrangeShips = () => {
+  //   const arr = [];
+  //   shipsLocations.forEach((item, index) => {
+  //     arr.push([item.length, index]);
+  //   });
+  //   // console.log(arr);
+  //   return arr;
+  // };
 
-  const hitShips = arrangeShips();
   const isHit = (ship, coordinates) =>
     ship.some(
       (value) => value[0] === coordinates[0] && value[1] === coordinates[1]
     );
 
   const isSunk = () =>
-    hitShips.some((value) => value[value.length - 2] === value.length - 2);
+    hitShipsReg.some((value) => value[value.length - 2] === value.length - 2);
   const recordHit = (index, coordinates) => {
-    hitShips.forEach((element) => {
+    hitShipsReg.forEach((element) => {
       if (element[element.length - 1] === index) {
         element.unshift(coordinates);
       }
@@ -561,26 +573,28 @@ const Gameboard = (shipsArr) => {
   };
 
   const receiveAttack = (coordinates) => {
+    console.log("hitShipsReg:", hitShipsReg);
     shipsLocations.forEach((item, index) => {
+      console.log("isHit: ", isHit(item, coordinates));
       if (isHit(item, coordinates)) {
         // record hit ships
         recordHit(index, coordinates);
         // check if the ship sunk
         if (
-          // hitShips.some((value) => value[value.length - 2] === value.length - 2)
+          // hitShipsReg.some((value) => value[value.length - 2] === value.length - 2)
           isSunk()
         ) {
           sunkenShips.push(item);
           console.log("Sunk", sunkenShips);
           // return "Sunk";
         }
-        console.log("Hit", hitShips);
+        console.log("Hit", hitShipsReg);
         // return "Hit";
       }
     });
     // record missing shots
     if (
-      !hitShips.some(
+      !hitShipsReg.some(
         (value) =>
           value[0][0] === coordinates[0] && value[0][1] === coordinates[1]
       )
@@ -589,8 +603,10 @@ const Gameboard = (shipsArr) => {
       console.log("Missed", missedShots);
       return "Missed";
     } else if (isSunk()) {
+      console.log("Sunk", sunkenShips);
       return "Sunk";
     } else {
+      console.log("Hit", hitShipsReg);
       return "Hit";
     }
   };
@@ -598,7 +614,7 @@ const Gameboard = (shipsArr) => {
     createBoard,
     receiveAttack,
     shipsLocations,
-    hitShips,
+    hitShipsReg,
     missedShots,
     sunkenShips,
   };
@@ -682,27 +698,33 @@ const Player = () => {
 // DONE!! // place ships on the board
 // DONE!! // Make the second board
 // DONE!! // add buttons Hide ships and Show ships - make them work
-// Each player places ships
-// Create a screen to change players
+// DONE!! // Each player places ships
 // Players attack each other and record hits or missing shots
+// recieveAttack() only records missed shots and adds nothing to hit array although it registers a hit
+// Create a screen to change players
 const playerStatus = document.querySelector(".player-status");
 const changeStatus = () => {
   if (playerStatus.innerText === "Player-1 plays") {
+    // hideShips();
     playerStatus.innerText = "Player-2 plays";
   } else if (playerStatus.innerText === "Player-2 plays") {
+    // hideShips();
     playerStatus.innerText = "Player-1 plays";
   }
 };
 const placeShipsBtn = document.querySelector(".place-ships-btn");
 const boardCells1 = document.querySelectorAll(".board-cell-1");
+const player1 = Player();
+const player2 = Player();
 const boardCellsShips1 = [];
 const boardCellsShips2 = [];
 
 // console.log(playerStatus.innerText[0]);
 placeShipsBtn.addEventListener("click", () => {
   if (playerStatus.innerText === "Player-1 plays") {
-    const player1 = Player();
+    // const player1 = Player();
     player1.createShips();
+    // const board1 = Gameboard(player1.myShips);
     player1.myShips.forEach((item) => {
       item.forEach((value) => {
         boardCells1.forEach((element, index) => {
@@ -718,8 +740,9 @@ placeShipsBtn.addEventListener("click", () => {
     });
     // playerStatus.innerText = "Player-2 plays";
   } else if (playerStatus.innerText === "Player-2 plays") {
-    const player2 = Player();
+    // const player2 = Player();
     player2.createShips();
+    // const board2 = Gameboard(player2.myShips);
     player2.myShips.forEach((item) => {
       item.forEach((value) => {
         boardCells1.forEach((element, index) => {
@@ -769,18 +792,36 @@ changeTurnBtn.addEventListener("click", () => {
   changeStatus();
   hideShips();
 });
+// attack the opponent
+// const boardCells2 = document.querySelectorAll(".board-cell-2");
+const gameboard2 = document.querySelector(".gameboard-2");
+const board1 = Gameboard(player1.myShips);
+const board2 = Gameboard(player2.myShips);
+
+gameboard2.addEventListener("click", (event) => {
+  const x = event.target.dataset.x;
+  const y = event.target.dataset.y;
+  const coordinates = [+x, +y];
+  if (playerStatus.innerText === "Player-1 plays") {
+    console.log("here");
+    board2.receiveAttack(coordinates);
+  } else if (playerStatus.innerText === "Player-2 plays") {
+    board1.receiveAttack(coordinates);
+  }
+  // console.log(coordinates);
+});
 
 // create a player > create ships
-// const player1 = Player("Joe");
-// const player2 = Player("Ana");
+// const player11 = Player("Joe");
+// const player22 = Player("Ana");
 // player1.createShips();
-// const board1 = Gameboard(player1.myShips);
-// console.log("Player1 ships", board1.shipsLocations);
+// const board11 = Gameboard(player11.myShips);
+// console.log("Player1 ships", board11.shipsLocations);
 // player2.createShips();
-// const board2 = Gameboard(player2.myShips);
-// console.log("Player2 ships", board2.shipsLocations);
+// const board22 = Gameboard(player22.myShips);
+// console.log("Player2 ships", board22.shipsLocations);
 
-// board1.receiveAttack([4, 0])
+// board1.receiveAttack([4, 0]);
 
 // board2.receiveAttack([2, 4]);
 // board1.receiveAttack([8, 7]);
