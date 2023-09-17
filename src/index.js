@@ -563,7 +563,7 @@ const Gameboard = (shipsArr) => {
       (value) => value[0] === coordinates[0] && value[1] === coordinates[1]
     );
 
-  const isSunk = (index) => {
+  const isSunk = () => {
     // hitShipsReg.some(
     //   (value) => value[value.length - 2] === value.length - 2
     // ) === true && sunkenShips.some((value) => index === value[1]) === false
@@ -609,7 +609,7 @@ const Gameboard = (shipsArr) => {
   const receiveAttack = (coordinates) => {
     // console.log("hitShipsReg:", hitShipsReg);
     const tempSunkArr = [...sunkenShips];
-    console.log("chieck", tempSunkArr, sunkenShips);
+    // console.log("chieck", tempSunkArr, sunkenShips);
     shipsLocations.forEach((item, index) => {
       // console.log("isHit: ", isHit(item, coordinates));
       if (isHit(item, coordinates)) {
@@ -618,7 +618,7 @@ const Gameboard = (shipsArr) => {
         // check if the ship sunk
         if (
           // hitShipsReg.some((value) => value[value.length - 2] === value.length - 2)
-          isSunk(index)
+          isSunk()
         ) {
           // sunkenShips.some(value => index === value[1])
           // console.log(sunkenShips.some((value) => index === value[1]));
@@ -837,8 +837,8 @@ changeTurnBtn.addEventListener("click", () => {
   hideShips();
 });
 // attack the opponent
-// const boardCells2 = document.querySelectorAll(".board-cell-2");
 const gameboard2 = document.querySelector(".gameboard-2");
+const boardCells2 = document.querySelectorAll(".board-cell-2");
 const board1 = Gameboard(player1.myShips);
 const board2 = Gameboard(player2.myShips);
 
@@ -857,7 +857,19 @@ gameboard2.addEventListener("click", (event) => {
     } else if (attackStatus === "Hit") {
       event.target.classList.add("hit");
     } else if (attackStatus === "Sunk") {
-      event.target.classList.add("sunk");
+      const sunkenShip = board2.sunkenShips[board2.sunkenShips.length - 1][0];
+      console.log(
+        "last sunk",
+        board2.sunkenShips[board2.sunkenShips.length - 1][0]
+      );
+      sunkenShip.forEach((value) => {
+        boardCells2.forEach((item) => {
+          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+            item.classList.add("sunk");
+          }
+        });
+      });
+      // event.target.classList.add("sunk");
     }
   } else if (playerStatus.innerText === "Player-2 plays") {
     // console.log(board1.receiveAttack(coordinates));
@@ -867,6 +879,8 @@ gameboard2.addEventListener("click", (event) => {
     } else if (attackStatus === "Hit") {
       event.target.classList.add("hit");
     } else if (attackStatus === "Sunk") {
+      // board1.shipsLocations[board1.shipsLocations.length-1];
+      // console.log("last sunk:", board1.shipsLocations);
       event.target.classList.add("sunk");
     }
   }
