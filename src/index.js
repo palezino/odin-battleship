@@ -700,9 +700,11 @@ const Player = () => {
 // DONE!! // add buttons Hide ships and Show ships - make them work
 // DONE!! // Each player places ships
 // Players attack each other and record hits or missing shots
-// recieveAttack() only records missed shots and adds nothing to hit array although it registers a hit
+// show missed/hit shots on the second board
+// RESOLVED!! // recieveAttack() only records missed shots and adds nothing to hit array although it registers a hit
 // Create a screen to change players
 const playerStatus = document.querySelector(".player-status");
+const gameStatus = document.querySelector(".game-status");
 const changeStatus = () => {
   if (playerStatus.innerText === "Player-1 plays") {
     // hideShips();
@@ -759,6 +761,7 @@ placeShipsBtn.addEventListener("click", () => {
   }
   if (boardCellsShips1.length > 0 && boardCellsShips2.length > 0) {
     placeShipsBtn.style.display = "none";
+    gameStatus.innerText = "Game on!";
   }
   // console.log(boardCellsShips1);
 });
@@ -799,11 +802,14 @@ const board1 = Gameboard(player1.myShips);
 const board2 = Gameboard(player2.myShips);
 
 gameboard2.addEventListener("click", (event) => {
+  if (gameStatus.innerText === "Placing ships...") {
+    return;
+  }
   const x = event.target.dataset.x;
   const y = event.target.dataset.y;
   const coordinates = [+x, +y];
   if (playerStatus.innerText === "Player-1 plays") {
-    console.log("here");
+    // console.log("here");
     board2.receiveAttack(coordinates);
   } else if (playerStatus.innerText === "Player-2 plays") {
     board1.receiveAttack(coordinates);
