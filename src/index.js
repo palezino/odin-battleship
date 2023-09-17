@@ -813,12 +813,16 @@ gameboard2.addEventListener("click", (event) => {
     const attackStatus = board2.receiveAttack(coordinates);
     if (attackStatus === "Missed") {
       event.target.classList.add("missed");
+    } else if (attackStatus === "Hit") {
+      event.target.classList.add("hit");
     }
   } else if (playerStatus.innerText === "Player-2 plays") {
     // console.log(board1.receiveAttack(coordinates));
     const attackStatus = board1.receiveAttack(coordinates);
     if (attackStatus === "Missed") {
       event.target.classList.add("missed");
+    } else if (attackStatus === "Hit") {
+      event.target.classList.add("hit");
     }
   }
   // console.log(coordinates);
