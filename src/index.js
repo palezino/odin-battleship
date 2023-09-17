@@ -809,13 +809,21 @@ gameboard2.addEventListener("click", (event) => {
   const y = event.target.dataset.y;
   const coordinates = [+x, +y];
   if (playerStatus.innerText === "Player-1 plays") {
-    // console.log("here");
-    board2.receiveAttack(coordinates);
+    // console.log(board2.receiveAttack(coordinates));
+    const attackStatus = board2.receiveAttack(coordinates);
+    if (attackStatus === "Missed") {
+      event.target.classList.add("missed");
+    }
   } else if (playerStatus.innerText === "Player-2 plays") {
-    board1.receiveAttack(coordinates);
+    // console.log(board1.receiveAttack(coordinates));
+    const attackStatus = board1.receiveAttack(coordinates);
+    if (attackStatus === "Missed") {
+      event.target.classList.add("missed");
+    }
   }
   // console.log(coordinates);
 });
+// record missing shots
 
 // create a player > create ships
 // const player11 = Player("Joe");

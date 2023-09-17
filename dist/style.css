@@ -87,7 +87,7 @@ body {
 
 .board-cell-1, .board-cell-2 {
     border: 1px solid black;
-    font-size: 10px;
+    font-size: .6rem;
 }
 
 .board-cell-1:hover, .board-cell-2:hover {
@@ -114,4 +114,11 @@ body {
 
 .ship {
     background-color: #4D4D4D;
+}
+
+.missed {
+    background-image: url('./images/dot.png');
+    background-size: 1.5rem;
+    background-repeat: no-repeat;
+    background-position: center;
 }
