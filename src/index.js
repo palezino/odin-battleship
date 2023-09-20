@@ -519,8 +519,10 @@ const Ship = () => {
 // gameboard will take ships locations as an array
 const Gameboard = (shipsArr) => {
   const shipsLocations = shipsArr;
-  const sunkenShips = [];
+  const hitShips = [];
+  // const sunkShips = [];
   const missedShots = [];
+  const sunkenShipsReg = [];
   // hitShipsReg [length, index, coordinates...]
   const hitShipsReg = [
     [4, 0],
@@ -566,14 +568,14 @@ const Gameboard = (shipsArr) => {
   const isSunk = () => {
     // hitShipsReg.some(
     //   (value) => value[value.length - 2] === value.length - 2
-    // ) === true && sunkenShips.some((value) => index === value[1]) === false
-    // sunkenShips.some((value) => {
+    // ) === true && sunkenShipsReg.some((value) => index === value[1]) === false
+    // sunkenShipsReg.some((value) => {
     //   console.log("index:", index);
     //   console.log("value:", value);
     //   return index === value[1];
     // });
     // console.log("index:", index);
-    // console.log(sunkenShips);
+    // console.log(sunkenShipsReg);
     // if (index === "undefined") {
     //   return false;
     // }
@@ -581,7 +583,7 @@ const Gameboard = (shipsArr) => {
     //   hitShipsReg.some(
     //     (value) => value[value.length - 2] === value.length - 2
     //   ) === true &&
-    //   sunkenShips.some((value) => index === value[1]) === false
+    //   sunkenShipsReg.some((value) => index === value[1]) === false
     // ) {
     //   return true;
     // } else {
@@ -589,9 +591,14 @@ const Gameboard = (shipsArr) => {
     // }
     let result = false;
     hitShipsReg.forEach((value) => {
+      console.log("value in hitshipreg:", value);
+      console.log("value[value.length - 2]:", value[value.length - 2]);
+      console.log("value.length - 2", value.length - 2);
       if (value[value.length - 2] === value.length - 2) {
-        result = true;
-        value.push("Sunk");
+        if (!value.includes("Sunk")) {
+          result = true;
+          value.push("Sunk");
+        }
       }
     });
     console.log("result:", result);
@@ -608,22 +615,27 @@ const Gameboard = (shipsArr) => {
 
   const receiveAttack = (coordinates) => {
     // console.log("hitShipsReg:", hitShipsReg);
-    const tempSunkArr = [...sunkenShips];
-    // console.log("chieck", tempSunkArr, sunkenShips);
+    // const tempSunkArr = [...sunkenShipsReg];
+    let sunkCheck = false;
+    // console.log("chieck", tempSunkArr, sunkenShipsReg);
     shipsLocations.forEach((item, index) => {
       // console.log("isHit: ", isHit(item, coordinates));
       if (isHit(item, coordinates)) {
         // record hit ships
         recordHit(index, coordinates);
-        // check if the ship sunk
+        hitShips.push(coordinates);
+        // check if the ship is sunk
         if (
           // hitShipsReg.some((value) => value[value.length - 2] === value.length - 2)
           isSunk()
         ) {
-          // sunkenShips.some(value => index === value[1])
-          // console.log(sunkenShips.some((value) => index === value[1]));
-          sunkenShips.push([item, index]);
-          console.log("Sunk", sunkenShips);
+          // sunkenShipsReg.some(value => index === value[1])
+          // console.log(sunkenShipsReg.some((value) => index === value[1]));
+          // check if I need to save index in the array
+          sunkenShipsReg.push([item, index]);
+          sunkCheck = true;
+          // sunkShips.push(item);
+          console.log("Sunk", sunkenShipsReg);
           // return "Sunk";
         }
         console.log("Hit", hitShipsReg);
@@ -640,12 +652,12 @@ const Gameboard = (shipsArr) => {
       missedShots.push(coordinates);
       // console.log("Missed", missedShots);
       return "Missed";
-    } else if (tempSunkArr.length !== sunkenShips.length) {
+    } else if (sunkCheck) {
       // how to check if sunk?
-      // console.log("Sunk", sunkenShips);
+      // console.log("Sunk", sunkenShipsReg);
       return "Sunk";
     } else {
-      // console.log("chieck", tempSunkArr, sunkenShips);
+      // console.log("chieck", tempSunkArr, sunkenShipsReg);
       // console.log("Hit", hitShipsReg);
       return "Hit";
     }
@@ -656,7 +668,9 @@ const Gameboard = (shipsArr) => {
     shipsLocations,
     hitShipsReg,
     missedShots,
-    sunkenShips,
+    sunkenShipsReg,
+    hitShips,
+    // sunkShips,
   };
 };
 
@@ -740,9 +754,12 @@ const Player = () => {
 // DONE!! // add buttons Hide ships and Show ships - make them work
 // DONE!! // Each player places ships
 // Players attack each other and record hits or missing shots
-// DONE! // show missed/hit shots on the second board
+// DONE!! // show missed/hit/sunk shots on the second board
 // FIXED!! // fix - all ships recorded as sunken after the first ship sunk
 // FIXED!! // recieveAttack() only records missed shots and adds nothing to hit array although it registers a hit
+// Display second board state according to player's turn - place ships according to theirs coordinates
+// probably a horizontal 2 square ship responce badly to attack, when hit one square all squares a red
+// DONE!! // place sunken ships!!!
 // Create a screen to change players
 const playerStatus = document.querySelector(".player-status");
 const gameStatus = document.querySelector(".game-status");
@@ -807,6 +824,119 @@ placeShipsBtn.addEventListener("click", () => {
   // console.log(shipsIndex1);
 });
 
+// toggle the ssecond board
+const toggleSecondBoard = () => {
+  if (playerStatus.innerText === "Player-1 plays") {
+    boardCells2.forEach((item) => {
+      if (item.classList.contains("missed")) {
+        item.classList.remove("missed");
+      }
+      if (item.classList.contains("hit")) {
+        item.classList.remove("hit");
+      }
+      if (item.classList.contains("sunk")) {
+        item.classList.remove("sunk");
+      }
+    });
+    const missedShots = board2.missedShots;
+    missedShots.forEach((value) => {
+      boardCells2.forEach((item) => {
+        if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+          item.classList.add("missed");
+        }
+      });
+    });
+    const hitShips = board2.hitShips;
+    hitShips.forEach((value) => {
+      boardCells2.forEach((item) => {
+        if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+          item.classList.add("hit");
+        }
+      });
+    });
+    // console.log("real one", board2.sunkenShipsReg[0][0][0]);
+    const sunkShips = board2.sunkenShipsReg;
+    // console.log("sunken ships", sunkShips);
+    sunkShips.forEach((value) => {
+      // console.log("value:", value);
+      value[0].forEach((element) => {
+        // console.log("element:", element);
+        boardCells2.forEach((item) => {
+          if (
+            +item.dataset.x === element[0] &&
+            +item.dataset.y === element[1]
+          ) {
+            item.classList.add("sunk");
+          }
+        });
+      });
+
+      // boardCells2.forEach((item) => {
+      //   if (
+      //     +item.dataset.x === value[0][0][0] &&
+      //     +item.dataset.y === value[0][0][1]
+      //   ) {
+      //     item.classList.add("sunk");
+      //   }
+      // });
+    });
+  } else if (playerStatus.innerText === "Player-2 plays") {
+    boardCells2.forEach((item) => {
+      if (item.classList.contains("missed")) {
+        item.classList.remove("missed");
+      }
+      if (item.classList.contains("hit")) {
+        item.classList.remove("hit");
+      }
+      if (item.classList.contains("sunk")) {
+        item.classList.remove("sunk");
+      }
+    });
+    const missedShots = board1.missedShots;
+    missedShots.forEach((value) => {
+      boardCells2.forEach((item) => {
+        if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+          item.classList.add("missed");
+        }
+      });
+    });
+    const hitShips = board1.hitShips;
+    hitShips.forEach((value) => {
+      boardCells2.forEach((item) => {
+        if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+          item.classList.add("hit");
+        }
+      });
+    });
+
+    const sunkShips = board1.sunkenShipsReg;
+    // console.log("sunken ships", sunkShips);
+    sunkShips.forEach((value) => {
+      // console.log("value:", value);
+      value[0].forEach((element) => {
+        // console.log("element:", element);
+        boardCells2.forEach((item) => {
+          if (
+            +item.dataset.x === element[0] &&
+            +item.dataset.y === element[1]
+          ) {
+            item.classList.add("sunk");
+          }
+        });
+      });
+    });
+    // const sunkShips = board1.sunkenShipsReg;
+    // // console.log("sunken ships", board1.sunkenShipsReg);
+    // sunkShips.forEach((value) => {
+    //   boardCells2.forEach((item) => {
+    //     if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+    //       item.classList.add("sunk");
+    //     }
+    //   });
+    // });
+  }
+};
+
 // hide ships
 const hideShips = () => {
   boardCells1.forEach((item) => {
@@ -835,6 +965,7 @@ const changeTurnBtn = document.querySelector(".change-turn-btn");
 changeTurnBtn.addEventListener("click", () => {
   changeStatus();
   hideShips();
+  toggleSecondBoard();
 });
 // attack the opponent
 const gameboard2 = document.querySelector(".gameboard-2");
@@ -857,11 +988,12 @@ gameboard2.addEventListener("click", (event) => {
     } else if (attackStatus === "Hit") {
       event.target.classList.add("hit");
     } else if (attackStatus === "Sunk") {
-      const sunkenShip = board2.sunkenShips[board2.sunkenShips.length - 1][0];
-      console.log(
-        "last sunk",
-        board2.sunkenShips[board2.sunkenShips.length - 1][0]
-      );
+      const sunkenShip =
+        board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0];
+      // console.log(
+      //   "last sunk",
+      //   board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0]
+      // );
       sunkenShip.forEach((value) => {
         boardCells2.forEach((item) => {
           if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
@@ -879,14 +1011,24 @@ gameboard2.addEventListener("click", (event) => {
     } else if (attackStatus === "Hit") {
       event.target.classList.add("hit");
     } else if (attackStatus === "Sunk") {
-      // board1.shipsLocations[board1.shipsLocations.length-1];
-      // console.log("last sunk:", board1.shipsLocations);
-      event.target.classList.add("sunk");
+      const sunkenShip =
+        board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
+      // console.log(
+      //   "last sunk",
+      //   board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0]
+      // );
+      sunkenShip.forEach((value) => {
+        boardCells2.forEach((item) => {
+          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+            item.classList.add("sunk");
+          }
+        });
+      });
+      // event.target.classList.add("sunk");
     }
   }
   // console.log(coordinates);
 });
-// record missing shots
 
 // create a player > create ships
 // const player11 = Player("Joe");
