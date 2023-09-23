@@ -769,8 +769,8 @@ const Player = () => {
 // DONE!! // Display second board state according to player's turn - place ships according to theirs coordinates
 // FIXED!! // probably a horizontal 2 square ship responce badly to attack, when hit one square all squares a red
 // DONE!! // place sunken ships!!!
-// Announce the winner
-// Create a screen to change players
+// DONE!! // Announce the winner
+// Change turn automatically
 // Place ships manually
 const playerStatus = document.querySelector(".player-status");
 const gameStatus = document.querySelector(".game-status");
@@ -782,6 +782,11 @@ const changeStatus = () => {
     // hideShips();
     playerStatus.innerText = "Player-1 plays";
   }
+};
+const changeTurn = () => {
+  changeStatus();
+  hideShips();
+  toggleSecondBoard();
 };
 const placeShipsBtn = document.querySelector(".place-ships-btn");
 const boardCells1 = document.querySelectorAll(".board-cell-1");
@@ -973,11 +978,7 @@ showShipsBtn.addEventListener("click", () => {
 });
 // change turn
 const changeTurnBtn = document.querySelector(".change-turn-btn");
-changeTurnBtn.addEventListener("click", () => {
-  changeStatus();
-  hideShips();
-  toggleSecondBoard();
-});
+changeTurnBtn.addEventListener("click", changeTurn);
 // attack the opponent
 const gameboard2 = document.querySelector(".gameboard-2");
 const boardCells2 = document.querySelectorAll(".board-cell-2");
@@ -1001,6 +1002,7 @@ gameboard2.addEventListener("click", (event) => {
     const attackStatus = board2.receiveAttack(coordinates);
     if (attackStatus === "Missed") {
       event.target.classList.add("missed");
+      changeTurn();
     } else if (attackStatus === "Winner") {
       const sunkenShip =
         board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0];
@@ -1035,6 +1037,7 @@ gameboard2.addEventListener("click", (event) => {
     const attackStatus = board1.receiveAttack(coordinates);
     if (attackStatus === "Missed") {
       event.target.classList.add("missed");
+      changeTurn();
     } else if (attackStatus === "Winner") {
       const sunkenShip =
         board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
