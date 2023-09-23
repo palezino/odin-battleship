@@ -770,7 +770,8 @@ const Player = () => {
 // FIXED!! // probably a horizontal 2 square ship responce badly to attack, when hit one square all squares a red
 // DONE!! // place sunken ships!!!
 // DONE!! // Announce the winner
-// Change turn automatically
+// DONE!! // Change turn automatically
+//
 // Place ships manually
 const playerStatus = document.querySelector(".player-status");
 const gameStatus = document.querySelector(".game-status");
@@ -787,6 +788,9 @@ const changeTurn = () => {
   changeStatus();
   hideShips();
   toggleSecondBoard();
+  if (gameStatus.innerText === `Can't put more ships!`) {
+    gameStatus.innerText = "Placing ships...";
+  }
 };
 const placeShipsBtn = document.querySelector(".place-ships-btn");
 const boardCells1 = document.querySelectorAll(".board-cell-1");
@@ -798,6 +802,13 @@ const shipsIndex2 = [];
 // console.log(playerStatus.innerText[0]);
 placeShipsBtn.addEventListener("click", () => {
   if (playerStatus.innerText === "Player-1 plays") {
+    if (shipsIndex1.length) {
+      gameStatus.innerText = `Can't put more ships!`;
+      return;
+    }
+    // if (gameStatus.innerText === `Can't put more ships!`) {
+    //   gameStatus.innerText = "Placing ships...";
+    // }
     // const player1 = Player();
     player1.createShips();
     // const board1 = Gameboard(player1.myShips);
@@ -816,6 +827,13 @@ placeShipsBtn.addEventListener("click", () => {
     });
     // playerStatus.innerText = "Player-2 plays";
   } else if (playerStatus.innerText === "Player-2 plays") {
+    if (shipsIndex2.length) {
+      gameStatus.innerText = `Can't put more ships!`;
+      return;
+    }
+    // if (gameStatus.innerText === `Can't put more ships!`) {
+    //   gameStatus.innerText = "Placing ships...";
+    // }
     // const player2 = Player();
     player2.createShips();
     // const board2 = Gameboard(player2.myShips);
