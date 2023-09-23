@@ -613,6 +613,12 @@ const Gameboard = (shipsArr) => {
     });
   };
 
+  const checkWinner = (sunkShips) => {
+    if (sunkShips.length === 10) {
+      return true;
+    }
+  };
+
   const receiveAttack = (coordinates) => {
     // console.log("hitShipsReg:", hitShipsReg);
     // const tempSunkArr = [...sunkenShipsReg];
@@ -655,6 +661,9 @@ const Gameboard = (shipsArr) => {
     } else if (sunkCheck) {
       // how to check if sunk?
       // console.log("Sunk", sunkenShipsReg);
+      if (checkWinner(sunkenShipsReg)) {
+        return "Winner";
+      }
       return "Sunk";
     } else {
       // console.log("chieck", tempSunkArr, sunkenShipsReg);
@@ -753,14 +762,16 @@ const Player = () => {
 // DONE!! // Make the second board
 // DONE!! // add buttons Hide ships and Show ships - make them work
 // DONE!! // Each player places ships
-// Players attack each other and record hits or missing shots
+// Done!! // Players attack each other and record hits or missing shots
 // DONE!! // show missed/hit/sunk shots on the second board
 // FIXED!! // fix - all ships recorded as sunken after the first ship sunk
 // FIXED!! // recieveAttack() only records missed shots and adds nothing to hit array although it registers a hit
-// Display second board state according to player's turn - place ships according to theirs coordinates
-// probably a horizontal 2 square ship responce badly to attack, when hit one square all squares a red
+// DONE!! // Display second board state according to player's turn - place ships according to theirs coordinates
+// FIXED!! // probably a horizontal 2 square ship responce badly to attack, when hit one square all squares a red
 // DONE!! // place sunken ships!!!
+// Announce the winner
 // Create a screen to change players
+// Place ships manually
 const playerStatus = document.querySelector(".player-status");
 const gameStatus = document.querySelector(".game-status");
 const changeStatus = () => {
@@ -974,7 +985,12 @@ const board1 = Gameboard(player1.myShips);
 const board2 = Gameboard(player2.myShips);
 
 gameboard2.addEventListener("click", (event) => {
-  if (gameStatus.innerText === "Placing ships...") {
+  if (
+    gameStatus.innerText === "Placing ships..." ||
+    event.target.classList.contains("outer-board-cell-x") ||
+    event.target.classList.contains("outer-board-cell-y")
+  ) {
+    // console.log(event.target.classList);
     return;
   }
   const x = event.target.dataset.x;
@@ -985,6 +1001,17 @@ gameboard2.addEventListener("click", (event) => {
     const attackStatus = board2.receiveAttack(coordinates);
     if (attackStatus === "Missed") {
       event.target.classList.add("missed");
+    } else if (attackStatus === "Winner") {
+      const sunkenShip =
+        board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0];
+      sunkenShip.forEach((value) => {
+        boardCells2.forEach((item) => {
+          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+            item.classList.add("sunk");
+          }
+        });
+      });
+      playerStatus.innerText = "Player 1 Wins!";
     } else if (attackStatus === "Hit") {
       event.target.classList.add("hit");
     } else if (attackStatus === "Sunk") {
@@ -1008,6 +1035,17 @@ gameboard2.addEventListener("click", (event) => {
     const attackStatus = board1.receiveAttack(coordinates);
     if (attackStatus === "Missed") {
       event.target.classList.add("missed");
+    } else if (attackStatus === "Winner") {
+      const sunkenShip =
+        board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
+      sunkenShip.forEach((value) => {
+        boardCells2.forEach((item) => {
+          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+            item.classList.add("sunk");
+          }
+        });
+      });
+      playerStatus.innerText = "Player 2 Wins!";
     } else if (attackStatus === "Hit") {
       event.target.classList.add("hit");
     } else if (attackStatus === "Sunk") {
