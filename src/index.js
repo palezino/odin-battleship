@@ -26,7 +26,7 @@ const Ship = () => {
 
   const shipSquares = [];
   const neighbourSquares = [];
-
+  // auxiliary functions
   const checkOverlapping = (shipArr, square) => {
     const result = [];
     if (shipArr.length === 0) {
@@ -42,7 +42,7 @@ const Ship = () => {
     // console.log(result);
     return result.some((value) => value === true);
   };
-
+  // calculate squares that are right next to a ship
   const calcNeighbourSquares = (firstSquare, shipLength, dir = "x") => {
     const result = [];
     if (dir === "x") {
@@ -109,6 +109,63 @@ const Ship = () => {
     return result;
   };
 
+  const checkShipsNum = (length) => {
+    let count = 0;
+    switch (length) {
+      case 4:
+        if (shipSquares.length === 0) {
+          // console.log("here");
+          break;
+        }
+        shipSquares.forEach((item) => {
+          if (item.length === 4) {
+            count++;
+          }
+        });
+        // console.log("count", count);
+        if (count >= 1) {
+          console.log("You only can have one 4-square ship!");
+          return false;
+        }
+        break;
+      case 3:
+        shipSquares.forEach((item) => {
+          if (item.length === 3) {
+            count++;
+          }
+        });
+        if (count >= 2) {
+          console.log("You only can have two 3-square ships!");
+          return false;
+        }
+        break;
+      case 2:
+        shipSquares.forEach((item) => {
+          if (item.length === 2) {
+            count++;
+          }
+        });
+        if (count >= 3) {
+          console.log("You only can have three 2-square ships!");
+          return false;
+        }
+        break;
+      case 1:
+        shipSquares.forEach((item) => {
+          if (item.length === 1) {
+            count++;
+          }
+        });
+        if (count >= 4) {
+          console.log("You only can have four 1-square ships!");
+          return false;
+        }
+        break;
+    }
+    return true;
+  };
+
+  // ships building functions
   const make1sqShip = () => {
     if (shipSquares.length === 10) {
       console.log("Ship squares:");
@@ -228,21 +285,13 @@ const Ship = () => {
         } else {
           secondSquare = [x, y - 1];
           thirdSquare = [x, y - 2];
-          // calculate all the neighbour squares and push to subarray
+          // calculate all the neighbour squares and push them to subarray
           neighbourSquares.push(calcNeighbourSquares(thirdSquare, 3, "y"));
         }
       }
-      // if some of the squares overlaps the previous ship - repeat from the beginning
+      // if some of the squares overlap the previous ship - repeat from the beginning
       const ship = [];
       ship.push(firstSquare, secondSquare, thirdSquare);
-      // console.log(ship);
-      // console.log(
-      //   ship.some(
-      //     (item) =>
-      //       checkOverlapping(shipSquares, item) ||
-      //       checkOverlapping(neighbourSquares, item)
-      //   )
-      // );
       if (
         ship.some(
           (item) =>
@@ -250,10 +299,6 @@ const Ship = () => {
             checkOverlapping(neighbourSquares, item)
         )
       ) {
-        // console.log("Ship squares:");
-        // console.log(shipSquares);
-        // console.log("Neigbour squares:");
-        // console.log(neighbourSquares);
         neighbourSquares.pop();
         return make3sqShips();
       } else {
@@ -373,62 +418,6 @@ const Ship = () => {
     }
   };
 
-  const checkShipsNum = (length) => {
-    let count = 0;
-    switch (length) {
-      case 4:
-        if (shipSquares.length === 0) {
-          // console.log("here");
-          break;
-        }
-        shipSquares.forEach((item) => {
-          if (item.length === 4) {
-            count++;
-          }
-        });
-        // console.log("count", count);
-        if (count >= 1) {
-          console.log("You only can have one 4-square ship!");
-          return false;
-        }
-        break;
-      case 3:
-        shipSquares.forEach((item) => {
-          if (item.length === 3) {
-            count++;
-          }
-        });
-        if (count >= 2) {
-          console.log("You only can have two 3-square ships!");
-          return false;
-        }
-        break;
-      case 2:
-        shipSquares.forEach((item) => {
-          if (item.length === 2) {
-            count++;
-          }
-        });
-        if (count >= 3) {
-          console.log("You only can have three 2-square ships!");
-          return false;
-        }
-        break;
-      case 1:
-        shipSquares.forEach((item) => {
-          if (item.length === 1) {
-            count++;
-          }
-        });
-        if (count >= 4) {
-          console.log("You only can have four 1-square ships!");
-          return false;
-        }
-        break;
-    }
-    return true;
-  };
-
   // make ships manually
   const makeShip = (firstSquare, length, dir = "x") => {
     if (shipSquares.length === 10) {
@@ -436,6 +425,7 @@ const Ship = () => {
       return false;
     }
     // console.log("Ship length", checkShipsNum(length));
+    // stop the function if all ships of all sizes are created
     if (!checkShipsNum(length)) {
       return false;
     }
@@ -519,7 +509,7 @@ const Ship = () => {
 // gameboard will take ships locations as an array
 const Gameboard = (shipsArr) => {
   const shipsLocations = shipsArr;
-  const hitShips = [];
+  // const hitShips = []; // ? might be useless
   // const sunkShips = [];
   const missedShots = [];
   const sunkenShipsReg = [];
@@ -537,6 +527,7 @@ const Gameboard = (shipsArr) => {
     [1, 9],
   ];
 
+  // ? might be useless
   const createBoard = () => {
     const board = [];
     let x = 0;
@@ -560,6 +551,7 @@ const Gameboard = (shipsArr) => {
   //   return arr;
   // };
 
+  // takes ship coordinates, and hit coordinates, and returns true if the ship was hit
   const isHit = (ship, coordinates) =>
     ship.some(
       (value) => value[0] === coordinates[0] && value[1] === coordinates[1]
@@ -594,6 +586,8 @@ const Gameboard = (shipsArr) => {
       console.log("value in hitshipreg:", value);
       console.log("value[value.length - 2]:", value[value.length - 2]);
       console.log("value.length - 2", value.length - 2);
+      // value[value.length - 2] - indicates the length of the ship
+      // value.length - 2 - indicates the number of hit squares
       if (value[value.length - 2] === value.length - 2) {
         if (!value.includes("Sunk")) {
           result = true;
@@ -629,7 +623,7 @@ const Gameboard = (shipsArr) => {
       if (isHit(item, coordinates)) {
         // record hit ships
         recordHit(index, coordinates);
-        hitShips.push(coordinates);
+        // hitShips.push(coordinates);
         // check if the ship is sunk
         if (
           // hitShipsReg.some((value) => value[value.length - 2] === value.length - 2)
@@ -678,16 +672,29 @@ const Gameboard = (shipsArr) => {
     hitShipsReg,
     missedShots,
     sunkenShipsReg,
-    hitShips,
+    // hitShips,
     // sunkShips,
   };
 };
 
+// const gameboard1 = document.querySelector(".gameboard-1");
+// gameboard1.addEventListener("click", (event) => {
+//   const x = event.target.dataset.x;
+//   const y = event.target.dataset.y;
+//   const coordinates = [+x, +y];
+//   console.log(coordinates);
+// });
+
 const Player = () => {
   // const getName = () => name;
+  const placeShipsStatus = document.querySelector(".place-ships-status");
+  const gameboard1 = document.querySelector(".gameboard-1");
+  const boardCells1 = document.querySelectorAll(".board-cell-1");
+  const placeShipBtn = document.querySelector(".place-ship");
+  const cancelShipBtn = document.querySelector(".cancel-ship");
   const myShips = [];
 
-  // help-function to createShips()
+  // help-functions to createShips()
   const defineLength = (shipsArr) => {
     if (shipsArr.length < 1) {
       return 4;
@@ -700,9 +707,89 @@ const Player = () => {
     }
   };
 
+  const placeGhostShip = (firstSquare, dir) => {
+    if (dir === "x") {
+      boardCells1.forEach((element) => {
+        if (
+          firstSquare[0] + 1 < 0 ||
+          firstSquare[0] + 1 > 9 ||
+          firstSquare[0] + 2 < 0 ||
+          firstSquare[0] + 2 > 9 ||
+          firstSquare[0] + 3 < 0 ||
+          firstSquare[0] + 3 > 9
+        ) {
+          return false;
+        } else {
+          if (
+            +element.dataset.x === firstSquare[0] &&
+            +element.dataset.y === firstSquare[1]
+          ) {
+            element.classList.add("ghost-ship");
+          }
+          if (
+            +element.dataset.x === firstSquare[0] + 1 &&
+            +element.dataset.y === firstSquare[1]
+          ) {
+            element.classList.add("ghost-ship");
+          }
+          if (
+            +element.dataset.x === firstSquare[0] + 2 &&
+            +element.dataset.y === firstSquare[1]
+          ) {
+            element.classList.add("ghost-ship");
+          }
+          if (
+            +element.dataset.x === firstSquare[0] + 3 &&
+            +element.dataset.y === firstSquare[1]
+          ) {
+            element.classList.add("ghost-ship");
+          }
+        }
+      });
+    } else if (dir === "y") {
+      boardCells1.forEach((element) => {
+        if (
+          firstSquare[1] + 1 < 0 ||
+          firstSquare[1] + 1 > 9 ||
+          firstSquare[1] + 2 < 0 ||
+          firstSquare[1] + 2 > 9 ||
+          firstSquare[1] + 3 < 0 ||
+          firstSquare[1] + 3 > 9
+        ) {
+          return false;
+        } else {
+          if (
+            +element.dataset.x === firstSquare[0] &&
+            +element.dataset.y === firstSquare[1]
+          ) {
+            element.classList.add("ghost-ship");
+          }
+          if (
+            +element.dataset.x === firstSquare[0] &&
+            +element.dataset.y === firstSquare[1] + 1
+          ) {
+            element.classList.add("ghost-ship");
+          }
+          if (
+            +element.dataset.x === firstSquare[0] &&
+            +element.dataset.y === firstSquare[1] + 2
+          ) {
+            element.classList.add("ghost-ship");
+          }
+          if (
+            +element.dataset.x === firstSquare[0] &&
+            +element.dataset.y === firstSquare[1] + 3
+          ) {
+            element.classList.add("ghost-ship");
+          }
+        }
+      });
+    }
+  };
+
   const createShips = () => {
     // the execution will follow the following steps:
-    // - explain that we start with one 4-squares ship, the two 3-squares ship etc.
+    // - we start with one 4-squares ship, the two 3-squares ship etc.
     // - input (or choose on the board) the start point of the ship
     // - choose a direction
     // - display all the problems if the ship's location is not correct (overlapping, going off the board)
@@ -710,6 +797,7 @@ const Player = () => {
 
     const shipFactory = Ship();
     const shipsArr = shipFactory.shipSquares;
+    let newShipDirection = "x";
     const randomShips = prompt(
       "Do you want to place ships automatically?",
       "yes"
@@ -718,33 +806,114 @@ const Player = () => {
       shipFactory.autoMakeShips();
       // console.log(shipFactory.showShips());
     } else {
+      // how to highlight next 4 squares next to the first square? add a new class OR do it all with JS?
+      // also when clicking on another square we need to clean up the previous preview
+
+      // Possible steps:
+      // user clicks on the squares
+      // check if the length is correct
+      // check if the squares are next to each other
+      // define the direction
+      // push the arguments to the ships making function
+      // continue making ships till all 10 ships are ready
+
+      placeShipBtn.style.display = "flex";
+      cancelShipBtn.style.display = "flex";
       console.log(
         "Let's create your ships.\nThe total amount of ships should be 10 ships.\nOne - 4-square ship.\nTwo - 3-square ships.\nThree - 2-square ships.\nFour - 1-square ships.\nWe will follow the above order to create your ships.\n We start with 4-square then 3-square etc."
       );
-      while (shipsArr.length < 10) {
-        const length = defineLength(shipsArr);
-        let firstSquare = prompt(
-          `Please, choose the first square of your ${length}-square ship`,
-          "[0,0]"
-        );
-        firstSquare = [+firstSquare[1], +firstSquare[3]];
-        let dir;
-        if (length !== 1) {
-          dir = prompt(
-            "Choose the direction",
-            "print x(across) or y(down)"
-          ).toLowerCase();
-        } else {
-          dir = "x";
+      // while (shipsArr.length < 10) {
+      const length = defineLength(shipsArr);
+      let firstSquare;
+      const ship = [];
+      // let firstSquare = prompt(
+      //   `Please, choose the first square of your ${length}-square ship`,
+      //   "[0,0]"
+      // );
+
+      placeShipsStatus.innerText = `Click on the squares of\n your ${length}-square ship.\nStart with the first one.`;
+
+      gameboard1.addEventListener("click", (event) => {
+        if (
+          event.target.classList.contains("outer-board-cell-x") ||
+          event.target.classList.contains("outer-board-cell-y")
+        ) {
+          return;
         }
-        if (shipFactory.makeShip(firstSquare, length, dir)) {
-          console.log("Done!");
-          console.log(shipFactory.showShips());
-        } else {
-          console.log("Please, try to change coordinates!");
+
+        boardCells1.forEach((item) => {
+          if (item.classList.contains("ghost-ship")) {
+            item.classList.remove("ghost-ship");
+          }
+        });
+
+        const x = event.target.dataset.x;
+        const y = event.target.dataset.y;
+        firstSquare = [+x, +y];
+        // ship.push(firstSquare);
+        console.log("firstSquare:", firstSquare);
+        console.log(event.target);
+        // shade possible 4-square ship
+        placeGhostShip(firstSquare, newShipDirection);
+        // change ship's direction by with a double click
+        event.target.addEventListener("click", () => {
+          if (newShipDirection === "x") {
+            newShipDirection = "y";
+          } else if (newShipDirection === "y") {
+            newShipDirection = "x";
+          }
+        });
+        // event.target.classList.add("ghost-ship");
+        // event.target.nextElementSibling.style = "background-color: green;";
+        // event.target.nextElementSibling.nextElementSibling.style =
+        //   "background-color: green;";
+        // event.target.nextElementSibling.nextElementSibling.nextElementSibling.style =
+        //   "background-color: green;";
+
+        // console.log("target:", event.target.nextElementSibling);
+        console.log("ship", ship);
+        if (ship.length > 1) {
+          if (ship[0][0] + 1 === ship[1][0]) {
+            console.log("direction: x");
+          } else if (ship[0][1] + 1 === ship[1][1]) {
+            console.log("direction: y");
+          } else {
+            console.log("dont know");
+          }
         }
-      }
-      console.log(shipFactory.showShips());
+      });
+      // gameboard1.addEventListener("mouseover", (event) => {
+      //   if (
+      //     event.target.classList.contains("outer-board-cell-x") ||
+      //     event.target.classList.contains("outer-board-cell-y")
+      //   ) {
+      //     return;
+      //   }
+      //   const x = event.target.dataset.x;
+      //   const y = event.target.dataset.y;
+      //   firstSquare = [+x, +y];
+
+      //   console.log("firstSquare:", firstSquare);
+      // });
+      // firstSquare = [+firstSquare[1], +firstSquare[3]];
+      // console.log(firstSquare);
+      // let dir;
+      // if (length !== 1) {
+      //   dir = prompt(
+      //     "Choose the direction",
+      //     "print x(across) or y(down)"
+      //   ).toLowerCase();
+      // } else {
+      //   dir = "x";
+      // }
+      // if (shipFactory.makeShip(firstSquare, length, "x")) {
+      //   console.log("Done!");
+      //   console.log(shipFactory.showShips());
+      // } else {
+      //   console.log("Please, try to change coordinates!");
+      // }
+      // }
+      // console.log(shipFactory.showShips());
     }
     // save all the created ships
     shipFactory.showShips().forEach((item) => myShips.push(item));
@@ -771,7 +940,6 @@ const Player = () => {
 // DONE!! // place sunken ships!!!
 // DONE!! // Announce the winner
 // DONE!! // Change turn automatically
-//
 // Place ships manually
 const playerStatus = document.querySelector(".player-status");
 const gameStatus = document.querySelector(".game-status");
@@ -792,6 +960,8 @@ const changeTurn = () => {
     gameStatus.innerText = "Placing ships...";
   }
 };
+const placeShipBtn = document.querySelector(".place-ship");
+const cancelShipBtn = document.querySelector(".cancel-ship");
 const placeShipsBtn = document.querySelector(".place-ships-btn");
 const boardCells1 = document.querySelectorAll(".board-cell-1");
 const player1 = Player();
@@ -854,6 +1024,10 @@ placeShipsBtn.addEventListener("click", () => {
   if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
     placeShipsBtn.style.display = "none";
     gameStatus.innerText = "Game on!";
+    placeShipBtn.style.display = "none";
+    cancelShipBtn.style.display = "none";
+    hideShipsBtn.style.display = "flex";
+    showShipsBtn.style.display = "flex";
   }
   // console.log(shipsIndex1);
 });
