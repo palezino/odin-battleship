@@ -59,6 +59,12 @@ body {
 
 .hide-ships, .show-ships {
     padding: .6em 1em;
+    display: none;
+}
+
+.place-ship, .cancel-ship {
+    padding: .6em 1em;
+    display: none;
 }
 
 .controls {
@@ -69,6 +75,11 @@ body {
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+}
+
+.place-ships-status {
+    text-align: center;
+    line-height: 1.5rem;
 }
 
 .place-ships-btn, .change-turn-btn {
@@ -114,6 +125,10 @@ body {
 
 .ship {
     background-color: #4D4D4D;
+}
+
+.ghost-ship {
+    background-color: green;
 }
 
 .missed {
