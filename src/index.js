@@ -707,7 +707,8 @@ const Player = () => {
     }
   };
 
-  const placeGhostShip = (firstSquare, dir) => {
+  const placeGhostShip = (firstSquare, dir, length) => {
+    const elArr = [];
     if (dir === "x") {
       boardCells1.forEach((element) => {
         if (
@@ -724,28 +725,33 @@ const Player = () => {
             +element.dataset.x === firstSquare[0] &&
             +element.dataset.y === firstSquare[1]
           ) {
+            elArr.push(element);
             element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] + 1 &&
             +element.dataset.y === firstSquare[1]
           ) {
+            elArr.push(element);
             element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] + 2 &&
             +element.dataset.y === firstSquare[1]
           ) {
+            elArr.push(element);
             element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] + 3 &&
             +element.dataset.y === firstSquare[1]
           ) {
+            elArr.push(element);
             element.classList.add("ghost-ship");
           }
         }
       });
+      // console.log("here", elArr);
     } else if (dir === "y") {
       boardCells1.forEach((element) => {
         if (
@@ -762,28 +768,42 @@ const Player = () => {
             +element.dataset.x === firstSquare[0] &&
             +element.dataset.y === firstSquare[1]
           ) {
+            elArr.push(element);
             element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] &&
             +element.dataset.y === firstSquare[1] + 1
           ) {
+            elArr.push(element);
             element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] &&
             +element.dataset.y === firstSquare[1] + 2
           ) {
+            elArr.push(element);
             element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] &&
             +element.dataset.y === firstSquare[1] + 3
           ) {
+            elArr.push(element);
             element.classList.add("ghost-ship");
           }
         }
       });
+    }
+    switch (length) {
+      case 4:
+        return [...elArr];
+      case 3:
+        return [elArr[0], elArr[1], elArr[2]];
+      case 2:
+        return [elArr[0], elArr[1]];
+      case 1:
+        return [elArr[0]];
     }
   };
 
@@ -850,11 +870,10 @@ const Player = () => {
         const x = event.target.dataset.x;
         const y = event.target.dataset.y;
         firstSquare = [+x, +y];
-        // ship.push(firstSquare);
         console.log("firstSquare:", firstSquare);
-        console.log(event.target);
+        // console.log(event.target);
         // shade possible 4-square ship
-        placeGhostShip(firstSquare, newShipDirection);
+        console.log("here", placeGhostShip(firstSquare, newShipDirection, 3));
         // change ship's direction by with a double click
         event.target.addEventListener("click", () => {
           if (newShipDirection === "x") {
@@ -863,12 +882,6 @@ const Player = () => {
             newShipDirection = "x";
           }
         });
-        // event.target.classList.add("ghost-ship");
-        // event.target.nextElementSibling.style = "background-color: green;";
-        // event.target.nextElementSibling.nextElementSibling.style =
-        //   "background-color: green;";
-        // event.target.nextElementSibling.nextElementSibling.nextElementSibling.style =
-        //   "background-color: green;";
 
         // console.log("target:", event.target.nextElementSibling);
         console.log("ship", ship);
@@ -882,38 +895,6 @@ const Player = () => {
           }
         }
       });
-      // gameboard1.addEventListener("mouseover", (event) => {
-      //   if (
-      //     event.target.classList.contains("outer-board-cell-x") ||
-      //     event.target.classList.contains("outer-board-cell-y")
-      //   ) {
-      //     return;
-      //   }
-      //   const x = event.target.dataset.x;
-      //   const y = event.target.dataset.y;
-      //   firstSquare = [+x, +y];
-
-      //   console.log("firstSquare:", firstSquare);
-      // });
-      // firstSquare = [+firstSquare[1], +firstSquare[3]];
-      // console.log(firstSquare);
-      // let dir;
-      // if (length !== 1) {
-      //   dir = prompt(
-      //     "Choose the direction",
-      //     "print x(across) or y(down)"
-      //   ).toLowerCase();
-      // } else {
-      //   dir = "x";
-      // }
-      // if (shipFactory.makeShip(firstSquare, length, "x")) {
-      //   console.log("Done!");
-      //   console.log(shipFactory.showShips());
-      // } else {
-      //   console.log("Please, try to change coordinates!");
-      // }
-      // }
-      // console.log(shipFactory.showShips());
     }
     // save all the created ships
     shipFactory.showShips().forEach((item) => myShips.push(item));
