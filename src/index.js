@@ -29,8 +29,9 @@ const Ship = () => {
   const neighbourSquares = [];
   // auxiliary functions
   const checkOverlapping = (shipArr, square) => {
+    // console.log("checkOverlapping", shipArr);
     const result = [];
-    if (shipArr.length === 0) {
+    if (shipArr.length === 0 || shipArr === undefined) {
       return false;
     } else {
       // console.log(square);
@@ -202,7 +203,7 @@ const Ship = () => {
       const x = Math.floor(Math.random() * 10);
       const y = Math.floor(Math.random() * 10);
       const firstSquare = [x, y];
-      // define the second, the third squares, and the fourth
+      // define the second
       let secondSquare;
       // randomly choose the direction
       const dirXY = Math.floor(Math.random() * 2); // 1 = x, 0 = y
@@ -504,7 +505,15 @@ const Ship = () => {
   // show an array with created ships
   const showShips = () => shipSquares;
 
-  return { autoMakeShips, makeShip, showShips, shipSquares };
+  return {
+    autoMakeShips,
+    makeShip,
+    showShips,
+    shipSquares,
+    neighbourSquares,
+    checkOverlapping,
+    calcNeighbourSquares,
+  };
 };
 
 // gameboard will take ships locations as an array
@@ -753,7 +762,7 @@ const Player = () => {
         ) {
           return false;
         } else {
-          console.log("firstSquare", firstSquare);
+          // console.log("firstSquare", firstSquare);
           if (
             +element.dataset.x === firstSquare[0] &&
             +element.dataset.y === firstSquare[1]
@@ -845,6 +854,7 @@ const Player = () => {
     let ship = [];
     const shipFactory = Ship();
     const shipsArr = shipFactory.shipSquares;
+    const neighbourSquares = shipFactory.neighbourSquares;
     let newShipDirection = "x";
     const randomShips = prompt(
       "Do you want to place ships automatically?",
@@ -865,16 +875,44 @@ const Player = () => {
       // placeShipsStatus.innerText = `Click on the squares of\n your ${length}-square ship.\nStart with the first one.`;
 
       placeShipBtn.addEventListener("click", () => {
-        const tempArr = [];
+        const tempShipArr = [];
+        let tempNeighbArr = [];
         ship.forEach((item) => {
-          item.classList.remove("ghost-ship");
-          item.classList.add("ship");
           const xItem = +item.dataset.x;
           const yItem = +item.dataset.y;
-          tempArr.push([xItem, yItem]);
+          tempShipArr.push([xItem, yItem]);
+
+          // item.classList.remove("ghost-ship");
+          // item.classList.add("ship");
         });
-        shipsArr.push(tempArr);
+        tempNeighbArr = [
+          ...shipFactory.calcNeighbourSquares(
+            tempShipArr[0],
+            tempShipArr.length,
+            newShipDirection
+          ),
+        ];
+
+        if (
+          tempShipArr.some(
+            (item) =>
+              shipFactory.checkOverlapping(shipFactory.shipSquares, item) ||
+              shipFactory.checkOverlapping(shipFactory.neighbourSquares, item)
+          )
+        ) {
+          placeShipsStatus.innerText = "Cannot place ship here!";
+          return false;
+        } else {
+          ship.forEach((item) => {
+            item.classList.remove("ghost-ship");
+            item.classList.add("ship");
+          });
+          shipsArr.push(tempShipArr);
+          neighbourSquares.push(tempNeighbArr);
+        }
+
         console.log("shipsArr", shipsArr);
+        console.log("neighbour squares", neighbourSquares);
       });
 
       gameboard1.addEventListener("click", (event) => {
