@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-alert */
 /* eslint-disable no-lonely-if */
@@ -707,60 +708,83 @@ const Player = () => {
     }
   };
 
+  const checkLength = (firstSquare, length, dir) => {
+    if (dir === "x") {
+      switch (length) {
+        case 4:
+          return (
+            firstSquare[0] + 3 > 9 ||
+            firstSquare[0] + 2 > 9 ||
+            firstSquare[0] + 1 > 9
+          );
+        case 3:
+          return firstSquare[0] + 2 > 9 || firstSquare[0] + 1 > 9;
+        case 2:
+          return firstSquare[0] + 1 > 9;
+        case 1:
+          return false;
+      }
+    } else if (dir === "y") {
+      switch (length) {
+        case 4:
+          return (
+            firstSquare[1] + 3 > 9 ||
+            firstSquare[1] + 2 > 9 ||
+            firstSquare[1] + 1 > 9
+          );
+        case 3:
+          return firstSquare[1] + 2 > 9 || firstSquare[1] + 1 > 9;
+        case 2:
+          return firstSquare[1] + 1 > 9;
+        case 1:
+          return false;
+      }
+    }
+  };
+
   const placeGhostShip = (firstSquare, dir, length) => {
     const elArr = [];
+    let tempArr = [];
     if (dir === "x") {
       boardCells1.forEach((element) => {
         if (
-          firstSquare[0] + 1 < 0 ||
-          firstSquare[0] + 1 > 9 ||
-          firstSquare[0] + 2 < 0 ||
-          firstSquare[0] + 2 > 9 ||
-          firstSquare[0] + 3 < 0 ||
-          firstSquare[0] + 3 > 9
+          checkLength(firstSquare, length, dir) ||
+          element.classList.contains("ship")
         ) {
           return false;
         } else {
+          console.log("firstSquare", firstSquare);
           if (
             +element.dataset.x === firstSquare[0] &&
             +element.dataset.y === firstSquare[1]
           ) {
             elArr.push(element);
-            element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] + 1 &&
             +element.dataset.y === firstSquare[1]
           ) {
             elArr.push(element);
-            element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] + 2 &&
             +element.dataset.y === firstSquare[1]
           ) {
             elArr.push(element);
-            element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] + 3 &&
             +element.dataset.y === firstSquare[1]
           ) {
             elArr.push(element);
-            element.classList.add("ghost-ship");
           }
         }
       });
-      // console.log("here", elArr);
     } else if (dir === "y") {
       boardCells1.forEach((element) => {
         if (
-          firstSquare[1] + 1 < 0 ||
-          firstSquare[1] + 1 > 9 ||
-          firstSquare[1] + 2 < 0 ||
-          firstSquare[1] + 2 > 9 ||
-          firstSquare[1] + 3 < 0 ||
-          firstSquare[1] + 3 > 9
+          checkLength(firstSquare, length, dir) ||
+          element.classList.contains("ship")
         ) {
           return false;
         } else {
@@ -769,42 +793,46 @@ const Player = () => {
             +element.dataset.y === firstSquare[1]
           ) {
             elArr.push(element);
-            element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] &&
             +element.dataset.y === firstSquare[1] + 1
           ) {
             elArr.push(element);
-            element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] &&
             +element.dataset.y === firstSquare[1] + 2
           ) {
             elArr.push(element);
-            element.classList.add("ghost-ship");
           }
           if (
             +element.dataset.x === firstSquare[0] &&
             +element.dataset.y === firstSquare[1] + 3
           ) {
             elArr.push(element);
-            element.classList.add("ghost-ship");
           }
         }
       });
     }
+    console.log("elArr", elArr);
     switch (length) {
       case 4:
-        return [...elArr];
+        tempArr = [...elArr];
+        break;
       case 3:
-        return [elArr[0], elArr[1], elArr[2]];
+        tempArr = [elArr[0], elArr[1], elArr[2]];
+        break;
       case 2:
-        return [elArr[0], elArr[1]];
+        tempArr = [elArr[0], elArr[1]];
+        break;
       case 1:
-        return [elArr[0]];
+        tempArr = [elArr[0]];
+        break;
     }
+
+    tempArr.forEach((item) => item.classList.add("ghost-ship"));
+    return tempArr;
   };
 
   const createShips = () => {
@@ -814,7 +842,7 @@ const Player = () => {
     // - choose a direction
     // - display all the problems if the ship's location is not correct (overlapping, going off the board)
     // - place a ship
-
+    let ship = [];
     const shipFactory = Ship();
     const shipsArr = shipFactory.shipSquares;
     let newShipDirection = "x";
@@ -824,34 +852,30 @@ const Player = () => {
     );
     if (randomShips === "yes") {
       shipFactory.autoMakeShips();
-      // console.log(shipFactory.showShips());
     } else {
-      // how to highlight next 4 squares next to the first square? add a new class OR do it all with JS?
-      // also when clicking on another square we need to clean up the previous preview
-
-      // Possible steps:
-      // user clicks on the squares
-      // check if the length is correct
-      // check if the squares are next to each other
-      // define the direction
-      // push the arguments to the ships making function
-      // continue making ships till all 10 ships are ready
-
       placeShipBtn.style.display = "flex";
       cancelShipBtn.style.display = "flex";
+
       console.log(
         "Let's create your ships.\nThe total amount of ships should be 10 ships.\nOne - 4-square ship.\nTwo - 3-square ships.\nThree - 2-square ships.\nFour - 1-square ships.\nWe will follow the above order to create your ships.\n We start with 4-square then 3-square etc."
       );
-      // while (shipsArr.length < 10) {
-      const length = defineLength(shipsArr);
-      let firstSquare;
-      const ship = [];
-      // let firstSquare = prompt(
-      //   `Please, choose the first square of your ${length}-square ship`,
-      //   "[0,0]"
-      // );
 
-      placeShipsStatus.innerText = `Click on the squares of\n your ${length}-square ship.\nStart with the first one.`;
+      // const length = defineLength(shipsArr);
+
+      // placeShipsStatus.innerText = `Click on the squares of\n your ${length}-square ship.\nStart with the first one.`;
+
+      placeShipBtn.addEventListener("click", () => {
+        const tempArr = [];
+        ship.forEach((item) => {
+          item.classList.remove("ghost-ship");
+          item.classList.add("ship");
+          const xItem = +item.dataset.x;
+          const yItem = +item.dataset.y;
+          tempArr.push([xItem, yItem]);
+        });
+        shipsArr.push(tempArr);
+        console.log("shipsArr", shipsArr);
+      });
 
       gameboard1.addEventListener("click", (event) => {
         if (
@@ -867,13 +891,16 @@ const Player = () => {
           }
         });
 
+        let firstSquare;
+        // let ship = [];
         const x = event.target.dataset.x;
         const y = event.target.dataset.y;
         firstSquare = [+x, +y];
+        const length = defineLength(shipsArr);
+        placeShipsStatus.innerText = `Click on the squares of\n your ${length}-square ship.\nStart with the first one.`;
         console.log("firstSquare:", firstSquare);
-        // console.log(event.target);
         // shade possible 4-square ship
-        console.log("here", placeGhostShip(firstSquare, newShipDirection, 3));
+        ship = [...placeGhostShip(firstSquare, newShipDirection, length)];
         // change ship's direction by with a double click
         event.target.addEventListener("click", () => {
           if (newShipDirection === "x") {
@@ -883,21 +910,23 @@ const Player = () => {
           }
         });
 
-        // console.log("target:", event.target.nextElementSibling);
-        console.log("ship", ship);
-        if (ship.length > 1) {
-          if (ship[0][0] + 1 === ship[1][0]) {
-            console.log("direction: x");
-          } else if (ship[0][1] + 1 === ship[1][1]) {
-            console.log("direction: y");
-          } else {
-            console.log("dont know");
-          }
-        }
+        // placeShipBtn.addEventListener("click", () => {
+        //   const tempArr = [];
+        //   ship.forEach((item) => {
+        //     item.classList.remove("ghost-ship");
+        //     item.classList.add("ship");
+        //     const xItem = +item.dataset.x;
+        //     const yItem = +item.dataset.y;
+        //     tempArr.push([xItem, yItem]);
+        //   });
+        //   shipsArr.push(tempArr);
+        //   console.log("shipsArr", shipsArr);
+        // });
       });
     }
+
     // save all the created ships
-    shipFactory.showShips().forEach((item) => myShips.push(item));
+    // shipFactory.showShips().forEach((item) => myShips.push(item));
   };
 
   return {
@@ -1013,7 +1042,7 @@ placeShipsBtn.addEventListener("click", () => {
   // console.log(shipsIndex1);
 });
 
-// toggle the ssecond board
+// toggle the second board
 const toggleSecondBoard = () => {
   if (playerStatus.innerText === "Player-1 plays") {
     boardCells2.forEach((item) => {
