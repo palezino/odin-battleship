@@ -702,6 +702,7 @@ const Player = () => {
   const boardCells1 = document.querySelectorAll(".board-cell-1");
   const placeShipBtn = document.querySelector(".place-ship");
   const cancelShipBtn = document.querySelector(".cancel-ship");
+  const playerStatus = document.querySelector(".player-status");
   const placeShipsBtn = document.querySelector(".place-ships-btn");
   const gameStatus = document.querySelector(".game-status");
   const hideShipsBtn = document.querySelector(".hide-ships");
@@ -911,14 +912,21 @@ const Player = () => {
           shipsArr.push(tempShipArr);
           neighbourSquares.push(tempNeighbArr);
         }
-        // stop ships creating when all the ships are placed
+        // stop creating ships when all the ships are placed
         if (shipsArr.length === 10) {
-          placeShipsBtn.style.display = "none";
-          gameStatus.innerText = "Game on!";
-          placeShipBtn.style.display = "none";
-          cancelShipBtn.style.display = "none";
-          hideShipsBtn.style.display = "flex";
-          showShipsBtn.style.display = "flex";
+          if (playerStatus.innerText === "Player-1 plays") {
+            placeShipsStatus.innerText =
+              "All your ships are here!\n Change turn!";
+            placeShipBtn.style.display = "none";
+            cancelShipBtn.style.display = "none";
+          } else if (playerStatus.innerText === "Player-2 plays") {
+            placeShipBtn.style.display = "none";
+            cancelShipBtn.style.display = "none";
+            placeShipsBtn.style.display = "none";
+            gameStatus.innerText = "Game on!";
+            hideShipsBtn.style.display = "flex";
+            showShipsBtn.style.display = "flex";
+          }
         }
 
         console.log("shipsArr", shipsArr);
@@ -1014,19 +1022,14 @@ const player2 = Player();
 const shipsIndex1 = [];
 const shipsIndex2 = [];
 
-// console.log(playerStatus.innerText[0]);
+// placing ships
 placeShipsBtn.addEventListener("click", () => {
   if (playerStatus.innerText === "Player-1 plays") {
     if (shipsIndex1.length) {
       gameStatus.innerText = `Can't put more ships!`;
       return;
     }
-    // if (gameStatus.innerText === `Can't put more ships!`) {
-    //   gameStatus.innerText = "Placing ships...";
-    // }
-    // const player1 = Player();
     player1.createShips();
-    // const board1 = Gameboard(player1.myShips);
     player1.myShips.forEach((item) => {
       item.forEach((value) => {
         boardCells1.forEach((element, index) => {
