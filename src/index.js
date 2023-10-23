@@ -702,6 +702,10 @@ const Player = () => {
   const boardCells1 = document.querySelectorAll(".board-cell-1");
   const placeShipBtn = document.querySelector(".place-ship");
   const cancelShipBtn = document.querySelector(".cancel-ship");
+  const placeShipsBtn = document.querySelector(".place-ships-btn");
+  const gameStatus = document.querySelector(".game-status");
+  const hideShipsBtn = document.querySelector(".hide-ships");
+  const showShipsBtn = document.querySelector(".show-ships");
   const myShips = [];
 
   // help-functions to createShips()
@@ -845,17 +849,15 @@ const Player = () => {
   };
 
   const createShips = () => {
-    // the execution will follow the following steps:
-    // - we start with one 4-squares ship, the two 3-squares ship etc.
-    // - input (or choose on the board) the start point of the ship
-    // - choose a direction
-    // - display all the problems if the ship's location is not correct (overlapping, going off the board)
-    // - place a ship
+    // an array of nodes for the current ship
     let ship = [];
+    // get tools for making a new ship
     const shipFactory = Ship();
     const shipsArr = shipFactory.shipSquares;
     const neighbourSquares = shipFactory.neighbourSquares;
+    // default direction is on x axis
     let newShipDirection = "x";
+
     const randomShips = prompt(
       "Do you want to place ships automatically?",
       "yes"
@@ -877,14 +879,13 @@ const Player = () => {
       placeShipBtn.addEventListener("click", () => {
         const tempShipArr = [];
         let tempNeighbArr = [];
+        // extract coordinates from nodes and push them to tempShipArr
         ship.forEach((item) => {
           const xItem = +item.dataset.x;
           const yItem = +item.dataset.y;
           tempShipArr.push([xItem, yItem]);
-
-          // item.classList.remove("ghost-ship");
-          // item.classList.add("ship");
         });
+        // calculate neighbour squares for the new ship
         tempNeighbArr = [
           ...shipFactory.calcNeighbourSquares(
             tempShipArr[0],
@@ -892,7 +893,7 @@ const Player = () => {
             newShipDirection
           ),
         ];
-
+        // check if the new ship overlapps other ships
         if (
           tempShipArr.some(
             (item) =>
@@ -909,6 +910,15 @@ const Player = () => {
           });
           shipsArr.push(tempShipArr);
           neighbourSquares.push(tempNeighbArr);
+        }
+        // stop ships creating when all the ships are placed
+        if (shipsArr.length === 10) {
+          placeShipsBtn.style.display = "none";
+          gameStatus.innerText = "Game on!";
+          placeShipBtn.style.display = "none";
+          cancelShipBtn.style.display = "none";
+          hideShipsBtn.style.display = "flex";
+          showShipsBtn.style.display = "flex";
         }
 
         console.log("shipsArr", shipsArr);
@@ -947,19 +957,6 @@ const Player = () => {
             newShipDirection = "x";
           }
         });
-
-        // placeShipBtn.addEventListener("click", () => {
-        //   const tempArr = [];
-        //   ship.forEach((item) => {
-        //     item.classList.remove("ghost-ship");
-        //     item.classList.add("ship");
-        //     const xItem = +item.dataset.x;
-        //     const yItem = +item.dataset.y;
-        //     tempArr.push([xItem, yItem]);
-        //   });
-        //   shipsArr.push(tempArr);
-        //   console.log("shipsArr", shipsArr);
-        // });
       });
     }
 
