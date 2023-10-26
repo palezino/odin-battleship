@@ -702,10 +702,9 @@ const Player = () => {
   const placeShipBtn = document.querySelector(".place-ship");
   const cancelShipBtn = document.querySelector(".cancel-ship");
   const playerStatus = document.querySelector(".player-status");
-  const placeShipsBtn = document.querySelector(".place-ships-btn");
+  const confirmBtn = document.querySelector(".confirm-btn");
   const gameStatus = document.querySelector(".game-status");
-  const hideShipsBtn = document.querySelector(".hide-ships");
-  const showShipsBtn = document.querySelector(".show-ships");
+
   let myShips = [];
 
   // help-functions to createShips()
@@ -917,16 +916,20 @@ const Player = () => {
         if (shipsArr.length === 10) {
           if (playerStatus.innerText === "Player-1 plays") {
             shipFactory.showShips().forEach((item) => myShips.push(item));
+            gameStatus.innerText = "All ships are here.";
             placeShipsStatus.innerText =
-              "All your ships are here!\n Press Confirm and Change turn!";
+              "All your ships are here!\n Press Confirm and change turn!";
             placeShipBtn.style.display = "none";
             cancelShipBtn.style.display = "none";
+            confirmBtn.style.display = "flex";
           } else if (playerStatus.innerText === "Player-2 plays") {
             shipFactory.showShips().forEach((item) => myShips.push(item));
+            gameStatus.innerText = "All ships are here.";
             placeShipsStatus.innerText =
               "All your ships are here!\n Press Confirm!";
             placeShipBtn.style.display = "none";
             cancelShipBtn.style.display = "none";
+            confirmBtn.style.display = "flex";
             // placeShipsBtn.style.display = "none";
             // gameStatus.innerText = "Game on!";
             // hideShipsBtn.style.display = "flex";
@@ -941,7 +944,9 @@ const Player = () => {
       gameboard1.addEventListener("click", (event) => {
         if (
           event.target.classList.contains("outer-board-cell-x") ||
-          event.target.classList.contains("outer-board-cell-y")
+          event.target.classList.contains("outer-board-cell-y") ||
+          gameStatus.innerText === "Game on!" ||
+          gameStatus.innerText === "All ships are here."
         ) {
           return;
         }
@@ -951,7 +956,6 @@ const Player = () => {
             item.classList.remove("ghost-ship");
           }
         });
-
         let firstSquare;
         // let ship = [];
         const x = event.target.dataset.x;
@@ -1035,6 +1039,8 @@ placeShipsBtn.addEventListener("click", () => {
       gameStatus.innerText = `Can't put more ships!`;
       return;
     }
+
+    placeShipsBtn.disabled = true;
     player1.createShips();
     // console.log("player1.myShips", player1.myShips);
     // ? add Confirm button to add indexes to the array
@@ -1053,7 +1059,6 @@ placeShipsBtn.addEventListener("click", () => {
     //     });
     //   });
     //   if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
-    //     // console.log("HERE!");
     //     placeShipsBtn.style.display = "none";
     //     gameStatus.innerText = "Game on!";
     //     placeShipBtn.style.display = "none";
@@ -1086,6 +1091,8 @@ placeShipsBtn.addEventListener("click", () => {
     //   gameStatus.innerText = "Placing ships...";
     // }
     // const player2 = Player();
+    gameStatus.innerText = "Placing ships...";
+    placeShipsBtn.disabled = true;
     player2.createShips();
     // const board2 = Gameboard(player2.myShips);
     // below code moved to confirm btn
@@ -1129,6 +1136,9 @@ confirmBtn.addEventListener("click", () => {
         });
       });
     });
+    changeTurn();
+    confirmBtn.style.display = "none";
+    placeShipsBtn.disabled = false;
     console.log("shipsIndex1", shipsIndex1);
   } else if (playerStatus.innerText === "Player-2 plays") {
     player2.myShips.forEach((item) => {
@@ -1144,6 +1154,8 @@ confirmBtn.addEventListener("click", () => {
         });
       });
     });
+    changeTurn();
+    confirmBtn.style.display = "none";
     console.log("shipsIndex2", shipsIndex2);
   }
   if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {

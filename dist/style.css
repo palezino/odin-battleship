@@ -86,6 +86,10 @@ body {
     padding: .7em 1.5em;
 }
 
+.change-turn-btn, .confirm-btn {
+    display: none;
+}
+
 .gameboard-1, .gameboard-2 {
     background-color: #999999;
     height: 25rem;
