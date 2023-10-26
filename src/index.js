@@ -46,6 +46,7 @@ const Ship = () => {
   };
   // calculate squares that are right next to a ship
   const calcNeighbourSquares = (firstSquare, shipLength, dir = "x") => {
+    console.log("firstSquare", firstSquare);
     const result = [];
     if (dir === "x") {
       // for 1 square ship: a, b, f, k, l, m, n, o
@@ -547,7 +548,7 @@ const Gameboard = (shipsArr) => {
       }
       x++;
     }
-    console.log(board);
+    // console.log(board);
     return board;
   };
 
@@ -827,7 +828,7 @@ const Player = () => {
         }
       });
     }
-    console.log("elArr", elArr);
+    // console.log("elArr", elArr);
     switch (length) {
       case 4:
         tempArr = [...elArr];
@@ -847,15 +848,124 @@ const Player = () => {
     return tempArr;
   };
 
+  // an array of nodes for the current ship
+  let ship = [];
+  // get tools for making a new ship
+  const shipFactory = Ship();
+  const shipsArr = shipFactory.shipSquares;
+  const neighbourSquares = shipFactory.neighbourSquares;
+  // default direction is on x axis
+  let newShipDirection = "x";
+
+  const handlePlaceShipBtn = () => {
+    console.log("pressed");
+    const tempShipArr = [];
+    let tempNeighbArr = [];
+    // extract coordinates from nodes and push them to tempShipArr
+    ship.forEach((item) => {
+      const xItem = +item.dataset.x;
+      const yItem = +item.dataset.y;
+      tempShipArr.push([xItem, yItem]);
+    });
+    // calculate neighbour squares for the new ship
+    tempNeighbArr = [
+      ...shipFactory.calcNeighbourSquares(
+        tempShipArr[0],
+        tempShipArr.length,
+        newShipDirection
+      ),
+    ];
+    // check if the new ship overlapps other ships
+    if (
+      tempShipArr.some(
+        (item) =>
+          shipFactory.checkOverlapping(shipFactory.shipSquares, item) ||
+          shipFactory.checkOverlapping(shipFactory.neighbourSquares, item)
+      )
+    ) {
+      placeShipsStatus.innerText = "Cannot place ship here!";
+      return false;
+    } else {
+      ship.forEach((item) => {
+        item.classList.remove("ghost-ship");
+        item.classList.add("ship");
+      });
+      shipsArr.push(tempShipArr);
+      // myShips.push(tempShipArr);
+      neighbourSquares.push(tempNeighbArr);
+    }
+    // stop creating ships when all the ships are placed
+    if (shipsArr.length === 10) {
+      if (playerStatus.innerText === "Player-1 plays") {
+        shipFactory.showShips().forEach((item) => myShips.push(item));
+        gameStatus.innerText = "All ships are here.";
+        placeShipsStatus.innerText =
+          "All your ships are here!\n Press Confirm and change turn!";
+        placeShipBtn.style.display = "none";
+        cancelShipBtn.style.display = "none";
+        confirmBtn.style.display = "flex";
+      } else if (playerStatus.innerText === "Player-2 plays") {
+        shipFactory.showShips().forEach((item) => myShips.push(item));
+        gameStatus.innerText = "All ships are here.";
+        placeShipsStatus.innerText =
+          "All your ships are here!\n Press Confirm!";
+        placeShipBtn.style.display = "none";
+        cancelShipBtn.style.display = "none";
+        confirmBtn.style.display = "flex";
+        // placeShipsBtn.style.display = "none";
+        // gameStatus.innerText = "Game on!";
+        // hideShipsBtn.style.display = "flex";
+        // showShipsBtn.style.display = "flex";
+      }
+    }
+  };
+
+  const handleGameboard1 = (event) => {
+    if (
+      event.target.classList.contains("outer-board-cell-x") ||
+      event.target.classList.contains("outer-board-cell-y") ||
+      gameStatus.innerText === "Game on!" ||
+      gameStatus.innerText === "All ships are here."
+    ) {
+      return;
+    }
+
+    boardCells1.forEach((item) => {
+      if (item.classList.contains("ghost-ship")) {
+        item.classList.remove("ghost-ship");
+      }
+    });
+    let firstSquare;
+    // let ship = [];
+    const x = event.target.dataset.x;
+    const y = event.target.dataset.y;
+    firstSquare = [+x, +y];
+    const length = defineLength(shipsArr);
+    placeShipsStatus.innerText = `Click on the squares of\n your ${length}-square ship.\nStart with the first one.`;
+    // console.log("firstSquare:", firstSquare);
+    // shade possible 4-square ship
+    ship = [...placeGhostShip(firstSquare, newShipDirection, length)];
+    // change ship's direction by with a double click
+    event.target.addEventListener("click", () => {
+      if (newShipDirection === "x") {
+        newShipDirection = "y";
+      } else if (newShipDirection === "y") {
+        newShipDirection = "x";
+      }
+    });
+  };
+
   const createShips = () => {
+    // COMMENTED OUT TEMP //
     // an array of nodes for the current ship
-    let ship = [];
-    // get tools for making a new ship
-    const shipFactory = Ship();
-    const shipsArr = shipFactory.shipSquares;
-    const neighbourSquares = shipFactory.neighbourSquares;
-    // default direction is on x axis
-    let newShipDirection = "x";
+    // let ship = [];
+    // // get tools for making a new ship
+    // const shipFactory = Ship();
+    // const shipsArr = shipFactory.shipSquares;
+    // const neighbourSquares = shipFactory.neighbourSquares;
+    // // default direction is on x axis
+    // let newShipDirection = "x";
+    // COMMENTED OUT TEMP //
 
     const randomShips = prompt(
       "Do you want to place ships automatically?",
@@ -876,115 +986,126 @@ const Player = () => {
 
       // placeShipsStatus.innerText = `Click on the squares of\n your ${length}-square ship.\nStart with the first one.`;
 
-      placeShipBtn.addEventListener("click", () => {
-        const tempShipArr = [];
-        let tempNeighbArr = [];
-        // extract coordinates from nodes and push them to tempShipArr
-        ship.forEach((item) => {
-          const xItem = +item.dataset.x;
-          const yItem = +item.dataset.y;
-          tempShipArr.push([xItem, yItem]);
-        });
-        // calculate neighbour squares for the new ship
-        tempNeighbArr = [
-          ...shipFactory.calcNeighbourSquares(
-            tempShipArr[0],
-            tempShipArr.length,
-            newShipDirection
-          ),
-        ];
-        // check if the new ship overlapps other ships
-        if (
-          tempShipArr.some(
-            (item) =>
-              shipFactory.checkOverlapping(shipFactory.shipSquares, item) ||
-              shipFactory.checkOverlapping(shipFactory.neighbourSquares, item)
-          )
-        ) {
-          placeShipsStatus.innerText = "Cannot place ship here!";
-          return false;
-        } else {
-          ship.forEach((item) => {
-            item.classList.remove("ghost-ship");
-            item.classList.add("ship");
-          });
-          shipsArr.push(tempShipArr);
-          // myShips.push(tempShipArr);
-          neighbourSquares.push(tempNeighbArr);
-        }
-        // stop creating ships when all the ships are placed
-        if (shipsArr.length === 10) {
-          if (playerStatus.innerText === "Player-1 plays") {
-            shipFactory.showShips().forEach((item) => myShips.push(item));
-            gameStatus.innerText = "All ships are here.";
-            placeShipsStatus.innerText =
-              "All your ships are here!\n Press Confirm and change turn!";
-            placeShipBtn.style.display = "none";
-            cancelShipBtn.style.display = "none";
-            confirmBtn.style.display = "flex";
-          } else if (playerStatus.innerText === "Player-2 plays") {
-            shipFactory.showShips().forEach((item) => myShips.push(item));
-            gameStatus.innerText = "All ships are here.";
-            placeShipsStatus.innerText =
-              "All your ships are here!\n Press Confirm!";
-            placeShipBtn.style.display = "none";
-            cancelShipBtn.style.display = "none";
-            confirmBtn.style.display = "flex";
-            // placeShipsBtn.style.display = "none";
-            // gameStatus.innerText = "Game on!";
-            // hideShipsBtn.style.display = "flex";
-            // showShipsBtn.style.display = "flex";
-          }
-        }
+      // commented out to test remove listener
+      // placeShipBtn.addEventListener("click", () => {
+      //   console.log("pressed");
+      //   const tempShipArr = [];
+      //   let tempNeighbArr = [];
+      //   // extract coordinates from nodes and push them to tempShipArr
+      //   ship.forEach((item) => {
+      //     const xItem = +item.dataset.x;
+      //     const yItem = +item.dataset.y;
+      //     tempShipArr.push([xItem, yItem]);
+      //   });
+      //   // calculate neighbour squares for the new ship
+      //   tempNeighbArr = [
+      //     ...shipFactory.calcNeighbourSquares(
+      //       tempShipArr[0],
+      //       tempShipArr.length,
+      //       newShipDirection
+      //     ),
+      //   ];
+      //   // check if the new ship overlapps other ships
+      //   if (
+      //     tempShipArr.some(
+      //       (item) =>
+      //         shipFactory.checkOverlapping(shipFactory.shipSquares, item) ||
+      //         shipFactory.checkOverlapping(shipFactory.neighbourSquares, item)
+      //     )
+      //   ) {
+      //     placeShipsStatus.innerText = "Cannot place ship here!";
+      //     return false;
+      //   } else {
+      //     ship.forEach((item) => {
+      //       item.classList.remove("ghost-ship");
+      //       item.classList.add("ship");
+      //     });
+      //     shipsArr.push(tempShipArr);
+      //     // myShips.push(tempShipArr);
+      //     neighbourSquares.push(tempNeighbArr);
+      //   }
+      //   // stop creating ships when all the ships are placed
+      //   if (shipsArr.length === 10) {
+      //     if (playerStatus.innerText === "Player-1 plays") {
+      //       shipFactory.showShips().forEach((item) => myShips.push(item));
+      //       gameStatus.innerText = "All ships are here.";
+      //       placeShipsStatus.innerText =
+      //         "All your ships are here!\n Press Confirm and change turn!";
+      //       placeShipBtn.style.display = "none";
+      //       cancelShipBtn.style.display = "none";
+      //       confirmBtn.style.display = "flex";
+      //     } else if (playerStatus.innerText === "Player-2 plays") {
+      //       shipFactory.showShips().forEach((item) => myShips.push(item));
+      //       gameStatus.innerText = "All ships are here.";
+      //       placeShipsStatus.innerText =
+      //         "All your ships are here!\n Press Confirm!";
+      //       placeShipBtn.style.display = "none";
+      //       cancelShipBtn.style.display = "none";
+      //       confirmBtn.style.display = "flex";
+      //       // placeShipsBtn.style.display = "none";
+      //       // gameStatus.innerText = "Game on!";
+      //       // hideShipsBtn.style.display = "flex";
+      //       // showShipsBtn.style.display = "flex";
+      //     }
+      //   }
 
-        console.log("shipsArr", shipsArr);
-        console.log("neighbour squares", neighbourSquares);
-      });
+      //   // console.log("shipsArr", shipsArr);
+      //   // console.log("neighbour squares", neighbourSquares);
+      // });
 
-      gameboard1.addEventListener("click", (event) => {
-        if (
-          event.target.classList.contains("outer-board-cell-x") ||
-          event.target.classList.contains("outer-board-cell-y") ||
-          gameStatus.innerText === "Game on!" ||
-          gameStatus.innerText === "All ships are here."
-        ) {
-          return;
-        }
+      // gameboard1.addEventListener("click", (event) => {
+      //   if (
+      //     event.target.classList.contains("outer-board-cell-x") ||
+      //     event.target.classList.contains("outer-board-cell-y") ||
+      //     gameStatus.innerText === "Game on!" ||
+      //     gameStatus.innerText === "All ships are here."
+      //   ) {
+      //     return;
+      //   }
 
-        boardCells1.forEach((item) => {
-          if (item.classList.contains("ghost-ship")) {
-            item.classList.remove("ghost-ship");
-          }
-        });
-        let firstSquare;
-        // let ship = [];
-        const x = event.target.dataset.x;
-        const y = event.target.dataset.y;
-        firstSquare = [+x, +y];
-        const length = defineLength(shipsArr);
-        placeShipsStatus.innerText = `Click on the squares of\n your ${length}-square ship.\nStart with the first one.`;
-        console.log("firstSquare:", firstSquare);
-        // shade possible 4-square ship
-        ship = [...placeGhostShip(firstSquare, newShipDirection, length)];
-        // change ship's direction by with a double click
-        event.target.addEventListener("click", () => {
-          if (newShipDirection === "x") {
-            newShipDirection = "y";
-          } else if (newShipDirection === "y") {
-            newShipDirection = "x";
-          }
-        });
-      });
+      //   boardCells1.forEach((item) => {
+      //     if (item.classList.contains("ghost-ship")) {
+      //       item.classList.remove("ghost-ship");
+      //     }
+      //   });
+      //   let firstSquare;
+      //   // let ship = [];
+      //   const x = event.target.dataset.x;
+      //   const y = event.target.dataset.y;
+      //   firstSquare = [+x, +y];
+      //   const length = defineLength(shipsArr);
+      //   placeShipsStatus.innerText = `Click on the squares of\n your ${length}-square ship.\nStart with the first one.`;
+      //   // console.log("firstSquare:", firstSquare);
+      //   // shade possible 4-square ship
+      //   ship = [...placeGhostShip(firstSquare, newShipDirection, length)];
+      //   // change ship's direction by with a double click
+      //   event.target.addEventListener("click", () => {
+      //     if (newShipDirection === "x") {
+      //       newShipDirection = "y";
+      //     } else if (newShipDirection === "y") {
+      //       newShipDirection = "x";
+      //     }
+      //   });
+      // });
+
+      placeShipBtn.addEventListener("click", handlePlaceShipBtn);
+      gameboard1.addEventListener("click", handleGameboard1);
     }
 
     // save all the created ships
     shipFactory.showShips().forEach((item) => myShips.push(item));
   };
 
+  const removeEvents = () => {
+    placeShipBtn.removeEventListener("click", handlePlaceShipBtn);
+    gameboard1.removeEventListener("click", handleGameboard1);
+  };
+
   return {
     // getName,
     createShips,
     myShips,
+    removeEvents,
   };
 };
 
@@ -1137,9 +1258,10 @@ confirmBtn.addEventListener("click", () => {
       });
     });
     changeTurn();
+    player1.removeEvents();
     confirmBtn.style.display = "none";
     placeShipsBtn.disabled = false;
-    console.log("shipsIndex1", shipsIndex1);
+    // console.log("shipsIndex1", shipsIndex1);
   } else if (playerStatus.innerText === "Player-2 plays") {
     player2.myShips.forEach((item) => {
       item.forEach((value) => {
@@ -1155,8 +1277,9 @@ confirmBtn.addEventListener("click", () => {
       });
     });
     changeTurn();
+    player2.removeEvents();
     confirmBtn.style.display = "none";
-    console.log("shipsIndex2", shipsIndex2);
+    // console.log("shipsIndex2", shipsIndex2);
   }
   if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
     // console.log("HERE!");
