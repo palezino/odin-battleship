@@ -916,17 +916,21 @@ const Player = () => {
         // stop creating ships when all the ships are placed
         if (shipsArr.length === 10) {
           if (playerStatus.innerText === "Player-1 plays") {
+            shipFactory.showShips().forEach((item) => myShips.push(item));
             placeShipsStatus.innerText =
-              "All your ships are here!\n Change turn!";
+              "All your ships are here!\n Press Confirm and Change turn!";
             placeShipBtn.style.display = "none";
             cancelShipBtn.style.display = "none";
           } else if (playerStatus.innerText === "Player-2 plays") {
+            shipFactory.showShips().forEach((item) => myShips.push(item));
+            placeShipsStatus.innerText =
+              "All your ships are here!\n Press Confirm!";
             placeShipBtn.style.display = "none";
             cancelShipBtn.style.display = "none";
-            placeShipsBtn.style.display = "none";
-            gameStatus.innerText = "Game on!";
-            hideShipsBtn.style.display = "flex";
-            showShipsBtn.style.display = "flex";
+            // placeShipsBtn.style.display = "none";
+            // gameStatus.innerText = "Game on!";
+            // hideShipsBtn.style.display = "flex";
+            // showShipsBtn.style.display = "flex";
           }
         }
 
@@ -1125,6 +1129,7 @@ confirmBtn.addEventListener("click", () => {
         });
       });
     });
+    console.log("shipsIndex1", shipsIndex1);
   } else if (playerStatus.innerText === "Player-2 plays") {
     player2.myShips.forEach((item) => {
       item.forEach((value) => {
@@ -1139,6 +1144,7 @@ confirmBtn.addEventListener("click", () => {
         });
       });
     });
+    console.log("shipsIndex2", shipsIndex2);
   }
   if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
     // console.log("HERE!");
