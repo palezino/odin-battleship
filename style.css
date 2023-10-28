@@ -82,7 +82,14 @@ body {
     line-height: 1.5rem;
 }
 
-.place-ships-btn, .change-turn-btn, .confirm-btn {
+.place-ships {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.place-ships-yourself-btn, .place-ships-randomly-btn, .change-turn-btn, .confirm-btn {
     padding: .7em 1.5em;
 }
 
