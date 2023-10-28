@@ -758,10 +758,14 @@ const Player = () => {
   const placeGhostShip = (firstSquare, dir, length) => {
     const elArr = [];
     let tempArr = [];
+    console.log("log", checkLength(firstSquare, length, dir)); // ? test this check before forEach loop
+    if (checkLength(firstSquare, length, dir)) {
+      return false;
+    }
     if (dir === "x") {
       boardCells1.forEach((element) => {
         if (
-          checkLength(firstSquare, length, dir) ||
+          // checkLength(firstSquare, length, dir) ||
           element.classList.contains("ship")
         ) {
           return false;
@@ -944,7 +948,11 @@ const Player = () => {
     placeShipsStatus.innerText = `Click on the squares of\n your ${length}-square ship.\nStart with the first one.`;
     // console.log("firstSquare:", firstSquare);
     // shade possible 4-square ship
-    ship = [...placeGhostShip(firstSquare, newShipDirection, length)];
+    if (placeGhostShip(firstSquare, newShipDirection, length)) {
+      ship = [...placeGhostShip(firstSquare, newShipDirection, length)];
+    } else {
+      return false;
+    }
     // change ship's direction by with a double click
     event.target.addEventListener("click", () => {
       if (newShipDirection === "x") {
