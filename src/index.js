@@ -1522,7 +1522,10 @@ gameboard2.addEventListener("click", (event) => {
   if (
     gameStatus.innerText === "Placing ships..." ||
     event.target.classList.contains("outer-board-cell-x") ||
-    event.target.classList.contains("outer-board-cell-y")
+    event.target.classList.contains("outer-board-cell-y") ||
+    event.target.classList.contains("missed") ||
+    event.target.classList.contains("hit") ||
+    event.target.classList.contains("sunk")
   ) {
     // console.log(event.target.classList);
     return;
