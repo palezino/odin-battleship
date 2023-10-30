@@ -1535,7 +1535,8 @@ gameboard2.addEventListener("click", (event) => {
     const attackStatus = board2.receiveAttack(coordinates);
     if (attackStatus === "Missed") {
       event.target.classList.add("missed");
-      changeTurn();
+      setTimeout(changeTurn, 300);
+      // changeTurn();
     } else if (attackStatus === "Winner") {
       const sunkenShip =
         board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0];
@@ -1570,7 +1571,8 @@ gameboard2.addEventListener("click", (event) => {
     const attackStatus = board1.receiveAttack(coordinates);
     if (attackStatus === "Missed") {
       event.target.classList.add("missed");
-      changeTurn();
+      setTimeout(changeTurn, 300);
+      // changeTurn();
     } else if (attackStatus === "Winner") {
       const sunkenShip =
         board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];

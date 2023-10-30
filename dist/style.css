@@ -95,6 +95,7 @@ body {
 
 .change-turn-btn, .confirm-btn {
     display: none;
+    justify-content: center;
 }
 
 .gameboard-1, .gameboard-2 {
