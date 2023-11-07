@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable prefer-const */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-alert */
@@ -1175,13 +1176,24 @@ const Player = () => {
 const playerStatus = document.querySelector(".player-status");
 const placeShipsStatus = document.querySelector(".place-ships-status");
 const gameStatus = document.querySelector(".game-status");
+// FUNCTION IS CHANGED! game mode added
 const changeStatus = () => {
-  if (playerStatus.innerText === "Player-1 plays") {
-    // hideShips();
-    playerStatus.innerText = "Player-2 plays";
-  } else if (playerStatus.innerText === "Player-2 plays") {
-    // hideShips();
-    playerStatus.innerText = "Player-1 plays";
+  if (gameMode.innerText === "PvC") {
+    if (playerStatus.innerText === "Player-1 plays") {
+      // hideShips();
+      playerStatus.innerText = "Computer plays";
+    } else if (playerStatus.innerText === "Computer plays") {
+      // hideShips();
+      playerStatus.innerText = "Player-1 plays";
+    }
+  } else {
+    if (playerStatus.innerText === "Player-1 plays") {
+      // hideShips();
+      playerStatus.innerText = "Player-2 plays";
+    } else if (playerStatus.innerText === "Player-2 plays") {
+      // hideShips();
+      playerStatus.innerText = "Player-1 plays";
+    }
   }
 };
 const changeTurn = () => {
@@ -1334,6 +1346,35 @@ confirmBtn.addEventListener("click", () => {
         });
       });
     });
+    // for PvC mode
+    if (gameMode.innerText === "PvC") {
+      player1.removeEvents();
+      confirmBtn.style.display = "none";
+      player2.createShipsRandomly();
+      player2.myShips.forEach((item) => {
+        item.forEach((value) => {
+          boardCells1.forEach((element, index) => {
+            if (
+              +element.dataset.x === value[0] &&
+              +element.dataset.y === value[1]
+            ) {
+              element.classList.remove("ghost-ship");
+              element.classList.add("ship");
+              shipsIndex2.push(index);
+            }
+          });
+        });
+      });
+      placeShipsYourselfBtn.style.display = "none";
+      placeShipsRandomlyBtn.style.display = "none";
+      gameStatus.innerText = "Game on!";
+      placeShipBtn.style.display = "none";
+      cancelShipBtn.style.display = "none";
+      hideShipsBtn.style.display = "flex";
+      showShipsBtn.style.display = "flex";
+      placeShipsStatus.innerText = "";
+      changeTurn();
+    }
     changeTurn();
     player1.removeEvents();
     confirmBtn.style.display = "none";
@@ -1429,7 +1470,10 @@ const toggleSecondBoard = () => {
       //   }
       // });
     });
-  } else if (playerStatus.innerText === "Player-2 plays") {
+  } else if (
+    playerStatus.innerText === "Player-2 plays" ||
+    playerStatus.innerText === "Computer plays"
+  ) {
     boardCells2.forEach((item) => {
       if (item.classList.contains("missed")) {
         item.classList.remove("missed");
@@ -1512,6 +1556,109 @@ showShipsBtn.addEventListener("click", () => {
 // change turn
 const changeTurnBtn = document.querySelector(".change-turn-btn");
 changeTurnBtn.addEventListener("click", changeTurn);
+// PC attack function
+const attackFromPC = (newCoordinates = null) => {
+  // DONE!!// don't attack the same square
+  // DONE!!// if hit attack neighbour square
+
+  // for PvC mode
+  if (gameMode.innerText === "PvC") {
+    if (
+      newCoordinates === null ||
+      newCoordinates[0] > 9 ||
+      newCoordinates[0] < 0 ||
+      newCoordinates[1] > 9 ||
+      newCoordinates[1] < 0
+    ) {
+      newCoordinates = [
+        Math.floor(Math.random() * 10),
+        Math.floor(Math.random() * 10),
+      ];
+    }
+    console.log("newCoordinates", newCoordinates);
+    const newAttackStatus = board1.receiveAttack(newCoordinates);
+    if (newAttackStatus === "Missed") {
+      boardCells2.forEach((element) => {
+        if (
+          +element.dataset.x === newCoordinates[0] &&
+          +element.dataset.y === newCoordinates[1]
+        ) {
+          if (
+            element.classList.contains("missed") ||
+            element.classList.contains("sunk") ||
+            element.classList.contains("hit")
+          ) {
+            console.log("function fired again from missed!");
+            attackFromPC();
+          } else {
+            element.classList.add("missed");
+            console.log("missed!");
+            setTimeout(changeTurn, 500);
+          }
+        }
+      });
+      // setTimeout(changeTurn, 300);
+      // changeTurn();
+    } else if (newAttackStatus === "Winner") {
+      const sunkenShip =
+        board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
+      sunkenShip.forEach((value) => {
+        boardCells2.forEach((item) => {
+          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+            item.classList.add("sunk");
+            console.log("sunk!");
+          }
+        });
+      });
+      playerStatus.innerText = "Computer Wins!";
+    } else if (newAttackStatus === "Hit") {
+      boardCells2.forEach((element) => {
+        if (
+          +element.dataset.x === newCoordinates[0] &&
+          +element.dataset.y === newCoordinates[1]
+        ) {
+          if (
+            element.classList.contains("hit") ||
+            element.classList.contains("sunk") ||
+            element.classList.contains("missed")
+          ) {
+            console.log("function fired again from hit!");
+            attackFromPC();
+          } else {
+            element.classList.add("hit");
+            const tempArr = [
+              [newCoordinates[0] + 1, newCoordinates[1]],
+              [newCoordinates[0] - 1, newCoordinates[1]],
+              [newCoordinates[0], newCoordinates[1] + 1],
+              [newCoordinates[0], newCoordinates[1] - 1],
+            ];
+            const neighbourSquare =
+              tempArr[Math.floor(Math.random() * tempArr.length)];
+            console.log("hit!", neighbourSquare);
+            setTimeout(() => {
+              attackFromPC(neighbourSquare);
+            }, 500);
+            // setTimeout(attackFromPC, 500);
+            // attackFromPC();
+          }
+        }
+      });
+    } else if (newAttackStatus === "Sunk") {
+      const sunkenShip =
+        board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
+      sunkenShip.forEach((value) => {
+        boardCells2.forEach((item) => {
+          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+            item.classList.add("sunk");
+          }
+        });
+      });
+      setTimeout(attackFromPC, 500);
+      // attackFromPC();
+      // event.target.classList.add("sunk");
+    }
+  }
+};
 // attack the opponent
 const gameboard2 = document.querySelector(".gameboard-2");
 const boardCells2 = document.querySelectorAll(".board-cell-2");
@@ -1536,9 +1683,17 @@ gameboard2.addEventListener("click", (event) => {
   if (playerStatus.innerText === "Player-1 plays") {
     // console.log(board2.receiveAttack(coordinates));
     const attackStatus = board2.receiveAttack(coordinates);
+    // console.log("attackStatus", attackStatus);
     if (attackStatus === "Missed") {
       event.target.classList.add("missed");
-      setTimeout(changeTurn, 300);
+      // setTimeout(changeTurn, 300);
+      if (gameMode.innerText === "PvC") {
+        setTimeout(changeTurn, 300);
+        setTimeout(attackFromPC, 500);
+        // attackFromPC();
+      } else {
+        setTimeout(changeTurn, 300);
+      }
       // changeTurn();
     } else if (attackStatus === "Winner") {
       const sunkenShip =
@@ -1609,6 +1764,24 @@ gameboard2.addEventListener("click", (event) => {
   // console.log(coordinates);
 });
 
+// to play against computer I need:
+// a button that changes a mode from 1-1 to 'vs computer'
+// let the computer place ships and attack till missed
+
+// make a game mode status that shows Game's mode 'PvP' or 'PvC'
+// based on the game mode modify functions
+// player-2 will become PC and play automatically
+// mark hit and sunken ships on player's map
+const gameMode = document.querySelector(".game-mode");
+const playWithComputerBtn = document.querySelector(".play-with-computer-btn");
+const playWithFriendBtn = document.querySelector(".play-with-friend-btn");
+playWithComputerBtn.addEventListener("click", () => {
+  gameMode.innerText = "PvC";
+});
+playWithFriendBtn.addEventListener("click", () => {
+  gameMode.innerText = "PvP";
+});
+
 // create a player > create ships
 // const player11 = Player("Joe");
 // const player22 = Player("Ana");
@@ -1618,9 +1791,7 @@ gameboard2.addEventListener("click", (event) => {
 // player2.createShips();
 // const board22 = Gameboard(player22.myShips);
 // console.log("Player2 ships", board22.shipsLocations);
-
 // board1.receiveAttack([4, 0]);
-
 // board2.receiveAttack([2, 4]);
 // board1.receiveAttack([8, 7]);
 // board2.receiveAttack([4, 2]);
@@ -1628,7 +1799,6 @@ gameboard2.addEventListener("click", (event) => {
 // board2.receiveAttack([5, 0]);
 // board1.receiveAttack([9, 9]);
 // board2.receiveAttack([0, 0]);
-
 // const ships = Ship();
 // const shipsArr = ships.autoMakeShips();
 // console.log(ships.shipSquares);

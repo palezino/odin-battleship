@@ -89,7 +89,12 @@ body {
     gap: 1rem;
 }
 
-.place-ships-yourself-btn, .place-ships-randomly-btn, .change-turn-btn, .confirm-btn {
+.place-ships-yourself-btn, 
+.place-ships-randomly-btn, 
+.change-turn-btn, 
+.confirm-btn, 
+.play-with-friend-btn, 
+.play-with-computer-btn {
     padding: .7em 1.5em;
 }
 
