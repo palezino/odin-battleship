@@ -62,7 +62,8 @@ body {
     display: none;
 }
 
-.place-ship, .cancel-ship {
+.place-ship {
+    margin: 0 auto;
     padding: .6em 1em;
     display: none;
 }
@@ -91,14 +92,18 @@ body {
 
 .place-ships-yourself-btn, 
 .place-ships-randomly-btn, 
-.change-turn-btn, 
 .confirm-btn, 
 .play-with-friend-btn, 
 .play-with-computer-btn {
     padding: .7em 1.5em;
 }
 
-.change-turn-btn, .confirm-btn {
+.place-ships-yourself-btn, 
+.place-ships-randomly-btn {
+    display: none;
+}
+
+.confirm-btn {
     display: none;
     justify-content: center;
 }
@@ -107,10 +112,14 @@ body {
     background-color: #999999;
     height: 25rem;
     width: 25rem;
+    /* height: 27vw;
+    width: 27vw; */
+    /* aspect-ratio: 1 / 1; */
     /* margin: auto 0; */
 
     display: grid;
     grid-template-columns: repeat(11, 1fr);
+    /* grid-template-columns: repeat(11, 2.2rem); */
 }
 
 .board-cell-1, .board-cell-2 {
