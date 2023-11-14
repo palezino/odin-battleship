@@ -449,7 +449,9 @@ const Player = () => {
         });
       });
     });
+    // console.log("shipFactory.showShips()", shipFactory.showShips());
     shipFactory.showShips().forEach((item) => myShips.push(item));
+    // console.log("myShips", myShips);
   };
 
   const removeEvents = () => {
@@ -459,6 +461,7 @@ const Player = () => {
 
   return {
     // getName,
+    handlePlaceShipBtn,
     createShipsYourself,
     createShipsRandomly,
     myShips,

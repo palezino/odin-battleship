@@ -12,8 +12,9 @@
 /* eslint-disable consistent-return */
 
 // import Ship from "./ship";
-import Gameboard from "./gameboard";
+// import Gameboard from "./gameboard";
 import Player from "./player";
+import Game from "./game";
 
 // factory functions here: Ship(done), Gameboard(done), Player(done)
 
@@ -1178,38 +1179,40 @@ import Player from "./player";
 // DONE!! // place sunken ships!!!
 // DONE!! // Announce the winner
 // DONE!! // Change turn automatically
+
 // Place ships manually
-const playerStatus = document.querySelector(".player-status");
-const placeShipsStatus = document.querySelector(".place-ships-status");
-const gameStatus = document.querySelector(".game-status");
-// FUNCTION IS CHANGED! game mode added
-const changeStatus = () => {
-  if (gameMode.innerText === "PvC") {
-    if (playerStatus.innerText === "Player-1 plays") {
-      // hideShips();
-      playerStatus.innerText = "Computer plays";
-    } else if (playerStatus.innerText === "Computer plays") {
-      // hideShips();
-      playerStatus.innerText = "Player-1 plays";
-    }
-  } else {
-    if (playerStatus.innerText === "Player-1 plays") {
-      // hideShips();
-      playerStatus.innerText = "Player-2 plays";
-    } else if (playerStatus.innerText === "Player-2 plays") {
-      // hideShips();
-      playerStatus.innerText = "Player-1 plays";
-    }
-  }
-};
-const changeTurn = () => {
-  changeStatus();
-  hideShips();
-  toggleSecondBoard();
-  if (gameStatus.innerText === `Can't put more ships!`) {
-    gameStatus.innerText = "Placing ships...";
-  }
-};
+// ---------------------COMMENT--OUT--BELOW----------------------//
+// const playerStatus = document.querySelector(".player-status");
+// const placeShipsStatus = document.querySelector(".place-ships-status");
+// const gameStatus = document.querySelector(".game-status");
+// const changeStatus = () => {
+//   if (gameMode.innerText === "PvC") {
+//     if (playerStatus.innerText === "Player-1 plays") {
+//       // hideShips();
+//       playerStatus.innerText = "Computer plays";
+//     } else if (playerStatus.innerText === "Computer plays") {
+//       // hideShips();
+//       playerStatus.innerText = "Player-1 plays";
+//     }
+//   } else {
+//     if (playerStatus.innerText === "Player-1 plays") {
+//       // hideShips();
+//       playerStatus.innerText = "Player-2 plays";
+//     } else if (playerStatus.innerText === "Player-2 plays") {
+//       // hideShips();
+//       playerStatus.innerText = "Player-1 plays";
+//     }
+//   }
+// };
+// const changeTurn = () => {
+//   changeStatus();
+//   hideShips();
+//   toggleSecondBoard();
+//   if (gameStatus.innerText === `Can't put more ships!`) {
+//     gameStatus.innerText = "Placing ships...";
+//   }
+// };
+// ---------------------COMMENT--OUT--ABOVE----------------------//
 const placeShipBtn = document.querySelector(".place-ship");
 // const cancelShipBtn = document.querySelector(".cancel-ship");
 const placeShipsYourselfBtn = document.querySelector(
@@ -1219,583 +1222,644 @@ const placeShipsRandomlyBtn = document.querySelector(
   ".place-ships-randomly-btn"
 );
 const confirmBtn = document.querySelector(".confirm-btn");
-const boardCells1 = document.querySelectorAll(".board-cell-1");
-const player1 = Player();
-const player2 = Player();
-const shipsIndex1 = [];
-const shipsIndex2 = [];
+placeShipBtn.addEventListener("click", Player().handlePlaceShipBtn);
+placeShipsYourselfBtn.addEventListener("click", Game().handleManualPlacement);
+placeShipsRandomlyBtn.addEventListener("click", Game().handleRandomPlacement);
+confirmBtn.addEventListener("click", Game().handleConfirmPlacement);
+// ---------------------COMMENT--OUT--BELOW----------------------//
+// const boardCells1 = document.querySelectorAll(".board-cell-1");
+// const player1 = Player();
+// const player2 = Player();
+// const shipsIndex1 = [];
+// const shipsIndex2 = [];
 
-// placing ships
-placeShipsRandomlyBtn.addEventListener("click", () => {
-  if (playerStatus.innerText === "Player-1 plays") {
-    if (shipsIndex1.length) {
-      gameStatus.innerText = `Can't put more ships!`;
-      return;
-    }
-    placeShipsYourselfBtn.disabled = true;
-    placeShipsRandomlyBtn.disabled = true;
-    player1.createShipsRandomly();
-  } else if (playerStatus.innerText === "Player-2 plays") {
-    if (shipsIndex2.length) {
-      gameStatus.innerText = `Can't put more ships!`;
-      return;
-    }
-    gameStatus.innerText = "Placing ships...";
-    placeShipsYourselfBtn.disabled = true;
-    placeShipsRandomlyBtn.disabled = true;
-    player2.createShipsRandomly();
-  }
-});
-placeShipsYourselfBtn.addEventListener("click", () => {
-  if (playerStatus.innerText === "Player-1 plays") {
-    if (shipsIndex1.length) {
-      gameStatus.innerText = `Can't put more ships!`;
-      return;
-    }
+// // placing ships
+// placeShipsRandomlyBtn.addEventListener("click", () => {
+//   if (playerStatus.innerText === "Player-1 plays") {
+//     if (shipsIndex1.length) {
+//       gameStatus.innerText = `Can't put more ships!`;
+//       return;
+//     }
+//     placeShipsYourselfBtn.disabled = true;
+//     placeShipsRandomlyBtn.disabled = true;
+//     player1.createShipsRandomly();
+//   } else if (playerStatus.innerText === "Player-2 plays") {
+//     if (shipsIndex2.length) {
+//       gameStatus.innerText = `Can't put more ships!`;
+//       return;
+//     }
+//     gameStatus.innerText = "Placing ships...";
+//     placeShipsYourselfBtn.disabled = true;
+//     placeShipsRandomlyBtn.disabled = true;
+//     player2.createShipsRandomly();
+//   }
+// });
+// placeShipsYourselfBtn.addEventListener("click", () => {
+//   if (playerStatus.innerText === "Player-1 plays") {
+//     if (shipsIndex1.length) {
+//       gameStatus.innerText = `Can't put more ships!`;
+//       return;
+//     }
 
-    placeShipsYourselfBtn.disabled = true;
-    placeShipsRandomlyBtn.disabled = true;
-    player1.createShipsYourself();
-    // console.log("player1.myShips", player1.myShips);
-    // ? add Confirm button to add indexes to the array
-    // confirmBtn.addEventListener("click", () => {
-    //   player1.myShips.forEach((item) => {
-    //     item.forEach((value) => {
-    //       boardCells1.forEach((element, index) => {
-    //         if (
-    //           +element.dataset.x === value[0] &&
-    //           +element.dataset.y === value[1]
-    //         ) {
-    //           element.classList.add("ship");
-    //           shipsIndex1.push(index);
-    //         }
-    //       });
-    //     });
-    //   });
-    //   if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
-    //     placeShipsBtn.style.display = "none";
-    //     gameStatus.innerText = "Game on!";
-    //     placeShipBtn.style.display = "none";
-    //     cancelShipBtn.style.display = "none";
-    //     hideShipsBtn.style.display = "flex";
-    //     showShipsBtn.style.display = "flex";
-    //   }
-    // });
-    // below code moved to confirm btn
-    // player1.myShips.forEach((item) => {
-    //   item.forEach((value) => {
-    //     boardCells1.forEach((element, index) => {
-    //       if (
-    //         +element.dataset.x === value[0] &&
-    //         +element.dataset.y === value[1]
-    //       ) {
-    //         element.classList.add("ship");
-    //         shipsIndex1.push(index);
-    //       }
-    //     });
-    //   });
-    // });
-    // playerStatus.innerText = "Player-2 plays";
-  } else if (playerStatus.innerText === "Player-2 plays") {
-    if (shipsIndex2.length) {
-      gameStatus.innerText = `Can't put more ships!`;
-      return;
-    }
-    // if (gameStatus.innerText === `Can't put more ships!`) {
-    //   gameStatus.innerText = "Placing ships...";
-    // }
-    // const player2 = Player();
-    gameStatus.innerText = "Placing ships...";
-    placeShipsYourselfBtn.disabled = true;
-    placeShipsRandomlyBtn.disabled = true;
-    player2.createShipsYourself();
-    // const board2 = Gameboard(player2.myShips);
-    // below code moved to confirm btn
-    // player2.myShips.forEach((item) => {
-    //   item.forEach((value) => {
-    //     boardCells1.forEach((element, index) => {
-    //       if (
-    //         +element.dataset.x === value[0] &&
-    //         +element.dataset.y === value[1]
-    //       ) {
-    //         element.classList.add("ship");
-    //         shipsIndex2.push(index);
-    //       }
-    //     });
-    //   });
-    // });
-  }
-  // if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
-  //   // console.log("HERE!");
-  //   placeShipsBtn.style.display = "none";
-  //   gameStatus.innerText = "Game on!";
-  //   placeShipBtn.style.display = "none";
-  //   cancelShipBtn.style.display = "none";
-  //   hideShipsBtn.style.display = "flex";
-  //   showShipsBtn.style.display = "flex";
-  // }
-  // console.log(shipsIndex1);
-});
-confirmBtn.addEventListener("click", () => {
-  if (playerStatus.innerText === "Player-1 plays") {
-    player1.myShips.forEach((item) => {
-      item.forEach((value) => {
-        boardCells1.forEach((element, index) => {
-          if (
-            +element.dataset.x === value[0] &&
-            +element.dataset.y === value[1]
-          ) {
-            element.classList.remove("ghost-ship");
-            element.classList.add("ship");
-            shipsIndex1.push(index);
-          }
-        });
-      });
-    });
-    // for PvC mode
-    if (gameMode.innerText === "PvC") {
-      player1.removeEvents();
-      confirmBtn.style.display = "none";
-      player2.createShipsRandomly();
-      player2.myShips.forEach((item) => {
-        item.forEach((value) => {
-          boardCells1.forEach((element, index) => {
-            if (
-              +element.dataset.x === value[0] &&
-              +element.dataset.y === value[1]
-            ) {
-              element.classList.remove("ghost-ship");
-              element.classList.add("ship");
-              shipsIndex2.push(index);
-            }
-          });
-        });
-      });
-      placeShipsYourselfBtn.style.display = "none";
-      placeShipsRandomlyBtn.style.display = "none";
-      gameStatus.innerText = "Game on!";
-      placeShipBtn.style.display = "none";
-      // cancelShipBtn.style.display = "none";
-      hideShipsBtn.style.display = "flex";
-      showShipsBtn.style.display = "flex";
-      placeShipsStatus.innerText = "";
-      changeTurn();
-    }
-    changeTurn();
-    player1.removeEvents();
-    confirmBtn.style.display = "none";
-    placeShipsYourselfBtn.disabled = false;
-    placeShipsRandomlyBtn.disabled = false;
-    // console.log("shipsIndex1", shipsIndex1);
-  } else if (playerStatus.innerText === "Player-2 plays") {
-    player2.myShips.forEach((item) => {
-      item.forEach((value) => {
-        boardCells1.forEach((element, index) => {
-          if (
-            +element.dataset.x === value[0] &&
-            +element.dataset.y === value[1]
-          ) {
-            element.classList.remove("ghost-ship");
-            element.classList.add("ship");
-            shipsIndex2.push(index);
-          }
-        });
-      });
-    });
-    changeTurn();
-    player2.removeEvents();
-    confirmBtn.style.display = "none";
-    // console.log("shipsIndex2", shipsIndex2);
-  }
-  if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
-    // console.log("HERE!");
-    placeShipsYourselfBtn.style.display = "none";
-    placeShipsRandomlyBtn.style.display = "none";
-    gameStatus.innerText = "Game on!";
-    placeShipBtn.style.display = "none";
-    // cancelShipBtn.style.display = "none";
-    hideShipsBtn.style.display = "flex";
-    showShipsBtn.style.display = "flex";
-    placeShipsStatus.innerText = "";
-  }
-});
+//     placeShipsYourselfBtn.disabled = true;
+//     placeShipsRandomlyBtn.disabled = true;
+//     player1.createShipsYourself();
+//     // console.log("player1.myShips", player1.myShips);
+//     // ? add Confirm button to add indexes to the array
+//     // confirmBtn.addEventListener("click", () => {
+//     //   player1.myShips.forEach((item) => {
+//     //     item.forEach((value) => {
+//     //       boardCells1.forEach((element, index) => {
+//     //         if (
+//     //           +element.dataset.x === value[0] &&
+//     //           +element.dataset.y === value[1]
+//     //         ) {
+//     //           element.classList.add("ship");
+//     //           shipsIndex1.push(index);
+//     //         }
+//     //       });
+//     //     });
+//     //   });
+//     //   if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
+//     //     placeShipsBtn.style.display = "none";
+//     //     gameStatus.innerText = "Game on!";
+//     //     placeShipBtn.style.display = "none";
+//     //     cancelShipBtn.style.display = "none";
+//     //     hideShipsBtn.style.display = "flex";
+//     //     showShipsBtn.style.display = "flex";
+//     //   }
+//     // });
+//     // below code moved to confirm btn
+//     // player1.myShips.forEach((item) => {
+//     //   item.forEach((value) => {
+//     //     boardCells1.forEach((element, index) => {
+//     //       if (
+//     //         +element.dataset.x === value[0] &&
+//     //         +element.dataset.y === value[1]
+//     //       ) {
+//     //         element.classList.add("ship");
+//     //         shipsIndex1.push(index);
+//     //       }
+//     //     });
+//     //   });
+//     // });
+//     // playerStatus.innerText = "Player-2 plays";
+//   } else if (playerStatus.innerText === "Player-2 plays") {
+//     if (shipsIndex2.length) {
+//       gameStatus.innerText = `Can't put more ships!`;
+//       return;
+//     }
+//     // if (gameStatus.innerText === `Can't put more ships!`) {
+//     //   gameStatus.innerText = "Placing ships...";
+//     // }
+//     // const player2 = Player();
+//     gameStatus.innerText = "Placing ships...";
+//     placeShipsYourselfBtn.disabled = true;
+//     placeShipsRandomlyBtn.disabled = true;
+//     player2.createShipsYourself();
+//     // const board2 = Gameboard(player2.myShips);
+//     // below code moved to confirm btn
+//     // player2.myShips.forEach((item) => {
+//     //   item.forEach((value) => {
+//     //     boardCells1.forEach((element, index) => {
+//     //       if (
+//     //         +element.dataset.x === value[0] &&
+//     //         +element.dataset.y === value[1]
+//     //       ) {
+//     //         element.classList.add("ship");
+//     //         shipsIndex2.push(index);
+//     //       }
+//     //     });
+//     //   });
+//     // });
+//   }
+//   // if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
+//   //   // console.log("HERE!");
+//   //   placeShipsBtn.style.display = "none";
+//   //   gameStatus.innerText = "Game on!";
+//   //   placeShipBtn.style.display = "none";
+//   //   cancelShipBtn.style.display = "none";
+//   //   hideShipsBtn.style.display = "flex";
+//   //   showShipsBtn.style.display = "flex";
+//   // }
+//   // console.log(shipsIndex1);
+// });
+// confirmBtn.addEventListener("click", () => {
+//   if (playerStatus.innerText === "Player-1 plays") {
+//     player1.myShips.forEach((item) => {
+//       item.forEach((value) => {
+//         boardCells1.forEach((element, index) => {
+//           if (
+//             +element.dataset.x === value[0] &&
+//             +element.dataset.y === value[1]
+//           ) {
+//             element.classList.remove("ghost-ship");
+//             element.classList.add("ship");
+//             shipsIndex1.push(index);
+//           }
+//         });
+//       });
+//     });
+//     // for PvC mode
+//     if (gameMode.innerText === "PvC") {
+//       player1.removeEvents();
+//       confirmBtn.style.display = "none";
+//       player2.createShipsRandomly();
+//       player2.myShips.forEach((item) => {
+//         item.forEach((value) => {
+//           boardCells1.forEach((element, index) => {
+//             if (
+//               +element.dataset.x === value[0] &&
+//               +element.dataset.y === value[1]
+//             ) {
+//               element.classList.remove("ghost-ship");
+//               element.classList.add("ship");
+//               shipsIndex2.push(index);
+//             }
+//           });
+//         });
+//       });
+//       placeShipsYourselfBtn.style.display = "none";
+//       placeShipsRandomlyBtn.style.display = "none";
+//       gameStatus.innerText = "Game on!";
+//       placeShipBtn.style.display = "none";
+//       // cancelShipBtn.style.display = "none";
+//       hideShipsBtn.style.display = "flex";
+//       showShipsBtn.style.display = "flex";
+//       placeShipsStatus.innerText = "";
+//       changeTurn();
+//     }
+//     changeTurn();
+//     player1.removeEvents();
+//     confirmBtn.style.display = "none";
+//     placeShipsYourselfBtn.disabled = false;
+//     placeShipsRandomlyBtn.disabled = false;
+//     // console.log("shipsIndex1", shipsIndex1);
+//   } else if (playerStatus.innerText === "Player-2 plays") {
+//     player2.myShips.forEach((item) => {
+//       item.forEach((value) => {
+//         boardCells1.forEach((element, index) => {
+//           if (
+//             +element.dataset.x === value[0] &&
+//             +element.dataset.y === value[1]
+//           ) {
+//             element.classList.remove("ghost-ship");
+//             element.classList.add("ship");
+//             shipsIndex2.push(index);
+//           }
+//         });
+//       });
+//     });
+//     changeTurn();
+//     player2.removeEvents();
+//     confirmBtn.style.display = "none";
+//     // console.log("shipsIndex2", shipsIndex2);
+//   }
+//   if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
+//     // console.log("HERE!");
+//     placeShipsYourselfBtn.style.display = "none";
+//     placeShipsRandomlyBtn.style.display = "none";
+//     gameStatus.innerText = "Game on!";
+//     placeShipBtn.style.display = "none";
+//     // cancelShipBtn.style.display = "none";
+//     hideShipsBtn.style.display = "flex";
+//     showShipsBtn.style.display = "flex";
+//     placeShipsStatus.innerText = "";
+//   }
+// });
 
-// toggle the second board
-const toggleSecondBoard = () => {
-  if (playerStatus.innerText === "Player-1 plays") {
-    boardCells2.forEach((item) => {
-      if (item.classList.contains("missed")) {
-        item.classList.remove("missed");
-      }
-      if (item.classList.contains("hit")) {
-        item.classList.remove("hit");
-      }
-      if (item.classList.contains("sunk")) {
-        item.classList.remove("sunk");
-      }
-    });
-    const missedShots = board2.missedShots;
-    missedShots.forEach((value) => {
-      boardCells2.forEach((item) => {
-        if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-          item.classList.add("missed");
-        }
-      });
-    });
-    const hitShips = board2.hitShips;
-    hitShips.forEach((value) => {
-      boardCells2.forEach((item) => {
-        if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-          item.classList.add("hit");
-        }
-      });
-    });
-    // console.log("real one", board2.sunkenShipsReg[0][0][0]);
-    const sunkShips = board2.sunkenShipsReg;
-    // console.log("sunken ships", sunkShips);
-    sunkShips.forEach((value) => {
-      // console.log("value:", value);
-      value[0].forEach((element) => {
-        // console.log("element:", element);
-        boardCells2.forEach((item) => {
-          if (
-            +item.dataset.x === element[0] &&
-            +item.dataset.y === element[1]
-          ) {
-            item.classList.add("sunk");
-          }
-        });
-      });
+// // toggle the second board
+// const toggleSecondBoard = () => {
+//   if (playerStatus.innerText === "Player-1 plays") {
+//     boardCells2.forEach((item) => {
+//       if (item.classList.contains("missed")) {
+//         item.classList.remove("missed");
+//       }
+//       if (item.classList.contains("hit")) {
+//         item.classList.remove("hit");
+//       }
+//       if (item.classList.contains("sunk")) {
+//         item.classList.remove("sunk");
+//       }
+//     });
+//     const missedShots = board2.missedShots;
+//     missedShots.forEach((value) => {
+//       boardCells2.forEach((item) => {
+//         if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//           item.classList.add("missed");
+//         }
+//       });
+//     });
+//     const hitShips = board2.hitShips;
+//     hitShips.forEach((value) => {
+//       boardCells2.forEach((item) => {
+//         if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//           item.classList.add("hit");
+//         }
+//       });
+//     });
+//     // console.log("real one", board2.sunkenShipsReg[0][0][0]);
+//     const sunkShips = board2.sunkenShipsReg;
+//     // console.log("sunken ships", sunkShips);
+//     sunkShips.forEach((value) => {
+//       // console.log("value:", value);
+//       value[0].forEach((element) => {
+//         // console.log("element:", element);
+//         boardCells2.forEach((item) => {
+//           if (
+//             +item.dataset.x === element[0] &&
+//             +item.dataset.y === element[1]
+//           ) {
+//             item.classList.add("sunk");
+//           }
+//         });
+//       });
 
-      // boardCells2.forEach((item) => {
-      //   if (
-      //     +item.dataset.x === value[0][0][0] &&
-      //     +item.dataset.y === value[0][0][1]
-      //   ) {
-      //     item.classList.add("sunk");
-      //   }
-      // });
-    });
-  } else if (
-    playerStatus.innerText === "Player-2 plays" ||
-    playerStatus.innerText === "Computer plays"
-  ) {
-    boardCells2.forEach((item) => {
-      if (item.classList.contains("missed")) {
-        item.classList.remove("missed");
-      }
-      if (item.classList.contains("hit")) {
-        item.classList.remove("hit");
-      }
-      if (item.classList.contains("sunk")) {
-        item.classList.remove("sunk");
-      }
-    });
-    const missedShots = board1.missedShots;
-    missedShots.forEach((value) => {
-      boardCells2.forEach((item) => {
-        if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-          item.classList.add("missed");
-        }
-      });
-    });
-    const hitShips = board1.hitShips;
-    hitShips.forEach((value) => {
-      boardCells2.forEach((item) => {
-        if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-          item.classList.add("hit");
-        }
-      });
-    });
+//       // boardCells2.forEach((item) => {
+//       //   if (
+//       //     +item.dataset.x === value[0][0][0] &&
+//       //     +item.dataset.y === value[0][0][1]
+//       //   ) {
+//       //     item.classList.add("sunk");
+//       //   }
+//       // });
+//     });
+//   } else if (
+//     playerStatus.innerText === "Player-2 plays" ||
+//     playerStatus.innerText === "Computer plays"
+//   ) {
+//     boardCells2.forEach((item) => {
+//       if (item.classList.contains("missed")) {
+//         item.classList.remove("missed");
+//       }
+//       if (item.classList.contains("hit")) {
+//         item.classList.remove("hit");
+//       }
+//       if (item.classList.contains("sunk")) {
+//         item.classList.remove("sunk");
+//       }
+//     });
+//     const missedShots = board1.missedShots;
+//     missedShots.forEach((value) => {
+//       boardCells2.forEach((item) => {
+//         if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//           item.classList.add("missed");
+//         }
+//       });
+//     });
+//     const hitShips = board1.hitShips;
+//     hitShips.forEach((value) => {
+//       boardCells2.forEach((item) => {
+//         if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//           item.classList.add("hit");
+//         }
+//       });
+//     });
 
-    const sunkShips = board1.sunkenShipsReg;
-    // console.log("sunken ships", sunkShips);
-    sunkShips.forEach((value) => {
-      // console.log("value:", value);
-      value[0].forEach((element) => {
-        // console.log("element:", element);
-        boardCells2.forEach((item) => {
-          if (
-            +item.dataset.x === element[0] &&
-            +item.dataset.y === element[1]
-          ) {
-            item.classList.add("sunk");
-          }
-        });
-      });
-    });
-    // const sunkShips = board1.sunkenShipsReg;
-    // // console.log("sunken ships", board1.sunkenShipsReg);
-    // sunkShips.forEach((value) => {
-    //   boardCells2.forEach((item) => {
-    //     if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-    //       item.classList.add("sunk");
-    //     }
-    //   });
-    // });
-  }
-};
+//     const sunkShips = board1.sunkenShipsReg;
+//     // console.log("sunken ships", sunkShips);
+//     sunkShips.forEach((value) => {
+//       // console.log("value:", value);
+//       value[0].forEach((element) => {
+//         // console.log("element:", element);
+//         boardCells2.forEach((item) => {
+//           if (
+//             +item.dataset.x === element[0] &&
+//             +item.dataset.y === element[1]
+//           ) {
+//             item.classList.add("sunk");
+//           }
+//         });
+//       });
+//     });
+//     // const sunkShips = board1.sunkenShipsReg;
+//     // // console.log("sunken ships", board1.sunkenShipsReg);
+//     // sunkShips.forEach((value) => {
+//     //   boardCells2.forEach((item) => {
+//     //     if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//     //       item.classList.add("sunk");
+//     //     }
+//     //   });
+//     // });
+//   }
+// };
 
-// hide ships
-const hideShips = () => {
-  boardCells1.forEach((item) => {
-    if (item.classList.contains("ship")) {
-      item.classList.remove("ship");
-    }
-  });
-};
+// // hide ships
+// const hideShips = () => {
+//   boardCells1.forEach((item) => {
+//     if (item.classList.contains("ship")) {
+//       item.classList.remove("ship");
+//     }
+//   });
+// };
+// ---------------------COMMENT--OUT--ABOVE----------------------//
 const hideShipsBtn = document.querySelector(".hide-ships");
-hideShipsBtn.addEventListener("click", hideShips);
-// show existing ships
 const showShipsBtn = document.querySelector(".show-ships");
-showShipsBtn.addEventListener("click", () => {
-  if (playerStatus.innerText === "Player-1 plays") {
-    shipsIndex1.forEach((item) => {
-      boardCells1[item].classList.add("ship");
-    });
-  } else if (playerStatus.innerText === "Player-2 plays") {
-    shipsIndex2.forEach((item) => {
-      boardCells1[item].classList.add("ship");
-    });
-  }
-});
-// change turn
-// const changeTurnBtn = document.querySelector(".change-turn-btn");
-// changeTurnBtn.addEventListener("click", changeTurn);
-// PC attack function
-const attackFromPC = (newCoordinates = null) => {
-  // DONE!!// don't attack the same square
-  // DONE!!// if hit attack neighbour square
+hideShipsBtn.addEventListener("click", Game().hideShips);
+showShipsBtn.addEventListener("click", Game().showShips);
+// ---------------------COMMENT--OUT--BELOW----------------------//
+// hideShipsBtn.addEventListener("click", hideShips);
+// show existing ships
+// showShipsBtn.addEventListener("click", () => {
+//   if (playerStatus.innerText === "Player-1 plays") {
+//     shipsIndex1.forEach((item) => {
+//       boardCells1[item].classList.add("ship");
+//     });
+//   } else if (playerStatus.innerText === "Player-2 plays") {
+//     shipsIndex2.forEach((item) => {
+//       boardCells1[item].classList.add("ship");
+//     });
+//   }
+// });
+// // change turn
+// // const changeTurnBtn = document.querySelector(".change-turn-btn");
+// // changeTurnBtn.addEventListener("click", changeTurn);
+// // PC attack function
+// const attackFromPC = (newCoordinates = null) => {
+//   // DONE!!// don't attack the same square
+//   // DONE!!// if hit attack neighbour square
 
-  // for PvC mode
-  if (gameMode.innerText === "PvC") {
-    if (
-      newCoordinates === null ||
-      newCoordinates[0] > 9 ||
-      newCoordinates[0] < 0 ||
-      newCoordinates[1] > 9 ||
-      newCoordinates[1] < 0
-    ) {
-      newCoordinates = [
-        Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 10),
-      ];
-    }
-    console.log("newCoordinates", newCoordinates);
-    const newAttackStatus = board1.receiveAttack(newCoordinates);
-    if (newAttackStatus === "Missed") {
-      boardCells2.forEach((element) => {
-        if (
-          +element.dataset.x === newCoordinates[0] &&
-          +element.dataset.y === newCoordinates[1]
-        ) {
-          if (
-            element.classList.contains("missed") ||
-            element.classList.contains("sunk") ||
-            element.classList.contains("hit")
-          ) {
-            console.log("function fired again from missed!");
-            attackFromPC();
-          } else {
-            element.classList.add("missed");
-            console.log("missed!");
-            setTimeout(changeTurn, 500);
-          }
-        }
-      });
-      // setTimeout(changeTurn, 300);
-      // changeTurn();
-    } else if (newAttackStatus === "Winner") {
-      const sunkenShip =
-        board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
-      sunkenShip.forEach((value) => {
-        boardCells2.forEach((item) => {
-          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-            item.classList.add("sunk");
-            console.log("sunk!");
-          }
-        });
-      });
-      playerStatus.innerText = "Computer Wins!";
-    } else if (newAttackStatus === "Hit") {
-      boardCells2.forEach((element) => {
-        if (
-          +element.dataset.x === newCoordinates[0] &&
-          +element.dataset.y === newCoordinates[1]
-        ) {
-          if (
-            element.classList.contains("hit") ||
-            element.classList.contains("sunk") ||
-            element.classList.contains("missed")
-          ) {
-            console.log("function fired again from hit!");
-            attackFromPC();
-          } else {
-            element.classList.add("hit");
-            const tempArr = [
-              [newCoordinates[0] + 1, newCoordinates[1]],
-              [newCoordinates[0] - 1, newCoordinates[1]],
-              [newCoordinates[0], newCoordinates[1] + 1],
-              [newCoordinates[0], newCoordinates[1] - 1],
-            ];
-            const neighbourSquare =
-              tempArr[Math.floor(Math.random() * tempArr.length)];
-            console.log("hit!", neighbourSquare);
-            setTimeout(() => {
-              attackFromPC(neighbourSquare);
-            }, 500);
-            // setTimeout(attackFromPC, 500);
-            // attackFromPC();
-          }
-        }
-      });
-    } else if (newAttackStatus === "Sunk") {
-      const sunkenShip =
-        board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
-      sunkenShip.forEach((value) => {
-        boardCells2.forEach((item) => {
-          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-            item.classList.add("sunk");
-          }
-        });
-      });
-      setTimeout(attackFromPC, 500);
-      // attackFromPC();
-      // event.target.classList.add("sunk");
-    }
-  }
-};
+//   // for PvC mode
+//   if (gameMode.innerText === "PvC") {
+//     if (
+//       newCoordinates === null ||
+//       newCoordinates[0] > 9 ||
+//       newCoordinates[0] < 0 ||
+//       newCoordinates[1] > 9 ||
+//       newCoordinates[1] < 0
+//     ) {
+//       newCoordinates = [
+//         Math.floor(Math.random() * 10),
+//         Math.floor(Math.random() * 10),
+//       ];
+//     }
+//     console.log("newCoordinates", newCoordinates);
+//     const newAttackStatus = board1.receiveAttack(newCoordinates);
+//     if (newAttackStatus === "Missed") {
+//       boardCells2.forEach((element) => {
+//         if (
+//           +element.dataset.x === newCoordinates[0] &&
+//           +element.dataset.y === newCoordinates[1]
+//         ) {
+//           if (
+//             element.classList.contains("missed") ||
+//             element.classList.contains("sunk") ||
+//             element.classList.contains("hit")
+//           ) {
+//             console.log("function fired again from missed!");
+//             attackFromPC();
+//           } else {
+//             element.classList.add("missed");
+//             console.log("missed!");
+//             setTimeout(changeTurn, 500);
+//           }
+//         }
+//       });
+//       // setTimeout(changeTurn, 300);
+//       // changeTurn();
+//     } else if (newAttackStatus === "Winner") {
+//       const sunkenShip =
+//         board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
+//       sunkenShip.forEach((value) => {
+//         boardCells2.forEach((item) => {
+//           if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//             item.classList.add("sunk");
+//             console.log("sunk!");
+//           }
+//         });
+//       });
+//       playerStatus.innerText = "Computer Wins!";
+//     } else if (newAttackStatus === "Hit") {
+//       boardCells2.forEach((element) => {
+//         if (
+//           +element.dataset.x === newCoordinates[0] &&
+//           +element.dataset.y === newCoordinates[1]
+//         ) {
+//           if (
+//             element.classList.contains("hit") ||
+//             element.classList.contains("sunk") ||
+//             element.classList.contains("missed")
+//           ) {
+//             console.log("function fired again from hit!");
+//             attackFromPC();
+//           } else {
+//             element.classList.add("hit");
+//             const tempArr = [
+//               [newCoordinates[0] + 1, newCoordinates[1]],
+//               [newCoordinates[0] - 1, newCoordinates[1]],
+//               [newCoordinates[0], newCoordinates[1] + 1],
+//               [newCoordinates[0], newCoordinates[1] - 1],
+//             ];
+//             const neighbourSquare =
+//               tempArr[Math.floor(Math.random() * tempArr.length)];
+//             console.log("hit!", neighbourSquare);
+//             setTimeout(() => {
+//               attackFromPC(neighbourSquare);
+//             }, 500);
+//             // setTimeout(attackFromPC, 500);
+//             // attackFromPC();
+//           }
+//         }
+//       });
+//     } else if (newAttackStatus === "Sunk") {
+//       const sunkenShip =
+//         board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
+//       sunkenShip.forEach((value) => {
+//         boardCells2.forEach((item) => {
+//           if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//             item.classList.add("sunk");
+//           }
+//         });
+//       });
+//       setTimeout(attackFromPC, 500);
+//       // attackFromPC();
+//       // event.target.classList.add("sunk");
+//     }
+//   }
+// };
+
 // attack the opponent
 const gameboard2 = document.querySelector(".gameboard-2");
-const boardCells2 = document.querySelectorAll(".board-cell-2");
-const board1 = Gameboard(player1.myShips);
-const board2 = Gameboard(player2.myShips);
+gameboard2.addEventListener("click", Game().handleAttack);
+// const boardCells2 = document.querySelectorAll(".board-cell-2");
+// const board1 = Gameboard(player1.myShips);
+// const board2 = Gameboard(player2.myShips);
 
-gameboard2.addEventListener("click", (event) => {
-  if (
-    gameStatus.innerText === "Placing ships..." ||
-    event.target.classList.contains("outer-board-cell-x") ||
-    event.target.classList.contains("outer-board-cell-y") ||
-    event.target.classList.contains("missed") ||
-    event.target.classList.contains("hit") ||
-    event.target.classList.contains("sunk")
-  ) {
-    // console.log(event.target.classList);
-    return;
-  }
-  const x = event.target.dataset.x;
-  const y = event.target.dataset.y;
-  const coordinates = [+x, +y];
-  if (playerStatus.innerText === "Player-1 plays") {
-    // console.log(board2.receiveAttack(coordinates));
-    const attackStatus = board2.receiveAttack(coordinates);
-    // console.log("attackStatus", attackStatus);
-    if (attackStatus === "Missed") {
-      event.target.classList.add("missed");
-      // setTimeout(changeTurn, 300);
-      if (gameMode.innerText === "PvC") {
-        setTimeout(changeTurn, 300);
-        setTimeout(attackFromPC, 500);
-        // attackFromPC();
-      } else {
-        setTimeout(changeTurn, 300);
-      }
-      // changeTurn();
-    } else if (attackStatus === "Winner") {
-      const sunkenShip =
-        board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0];
-      sunkenShip.forEach((value) => {
-        boardCells2.forEach((item) => {
-          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-            item.classList.add("sunk");
-          }
-        });
-      });
-      playerStatus.innerText = "Player 1 Wins!";
-    } else if (attackStatus === "Hit") {
-      event.target.classList.add("hit");
-    } else if (attackStatus === "Sunk") {
-      const sunkenShip =
-        board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0];
-      // console.log(
-      //   "last sunk",
-      //   board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0]
-      // );
-      sunkenShip.forEach((value) => {
-        boardCells2.forEach((item) => {
-          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-            item.classList.add("sunk");
-          }
-        });
-      });
-      // event.target.classList.add("sunk");
-    }
-  } else if (playerStatus.innerText === "Player-2 plays") {
-    // console.log(board1.receiveAttack(coordinates));
-    const attackStatus = board1.receiveAttack(coordinates);
-    if (attackStatus === "Missed") {
-      event.target.classList.add("missed");
-      setTimeout(changeTurn, 300);
-      // changeTurn();
-    } else if (attackStatus === "Winner") {
-      const sunkenShip =
-        board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
-      sunkenShip.forEach((value) => {
-        boardCells2.forEach((item) => {
-          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-            item.classList.add("sunk");
-          }
-        });
-      });
-      playerStatus.innerText = "Player 2 Wins!";
-    } else if (attackStatus === "Hit") {
-      event.target.classList.add("hit");
-    } else if (attackStatus === "Sunk") {
-      const sunkenShip =
-        board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
-      // console.log(
-      //   "last sunk",
-      //   board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0]
-      // );
-      sunkenShip.forEach((value) => {
-        boardCells2.forEach((item) => {
-          if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-            item.classList.add("sunk");
-          }
-        });
-      });
-      // event.target.classList.add("sunk");
-    }
-  }
-  // console.log(coordinates);
-});
+// const markAttacks = (event, board, attackStatus) => {
+//   if (attackStatus === "Missed") {
+//     event.target.classList.add("missed");
+//     // setTimeout(changeTurn, 300);
+//     if (gameMode.innerText === "PvC") {
+//       setTimeout(changeTurn, 300);
+//       setTimeout(attackFromPC, 500);
+//       // attackFromPC();
+//     } else {
+//       setTimeout(changeTurn, 300);
+//     }
+//     // changeTurn();
+//   } else if (attackStatus === "Winner") {
+//     const sunkenShip = board.sunkenShipsReg[board.sunkenShipsReg.length - 1][0];
+//     sunkenShip.forEach((value) => {
+//       boardCells2.forEach((item) => {
+//         if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//           item.classList.add("sunk");
+//         }
+//       });
+//     });
+//     playerStatus.innerText = "Player 1 Wins!";
+//   } else if (attackStatus === "Hit") {
+//     event.target.classList.add("hit");
+//   } else if (attackStatus === "Sunk") {
+//     const sunkenShip = board.sunkenShipsReg[board.sunkenShipsReg.length - 1][0];
+//     // console.log(
+//     //   "last sunk",
+//     //   board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0]
+//     // );
+//     sunkenShip.forEach((value) => {
+//       boardCells2.forEach((item) => {
+//         if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//           item.classList.add("sunk");
+//         }
+//       });
+//     });
+//     // event.target.classList.add("sunk");
+//   }
+// };
 
-// to play against computer I need:
-// a button that changes a mode from 1-1 to 'vs computer'
-// let the computer place ships and attack till missed
+// gameboard2.addEventListener("click", (event) => {
+//   if (
+//     gameStatus.innerText === "Placing ships..." ||
+//     event.target.classList.contains("outer-board-cell-x") ||
+//     event.target.classList.contains("outer-board-cell-y") ||
+//     event.target.classList.contains("missed") ||
+//     event.target.classList.contains("hit") ||
+//     event.target.classList.contains("sunk")
+//   ) {
+//     // console.log(event.target.classList);
+//     return;
+//   }
+//   const x = event.target.dataset.x;
+//   const y = event.target.dataset.y;
+//   const coordinates = [+x, +y];
+//   if (playerStatus.innerText === "Player-1 plays") {
+//     // console.log(board2.receiveAttack(coordinates));
+//     const attackStatus = board2.receiveAttack(coordinates);
+//     // console.log("attackStatus", attackStatus);
+//     markAttacks(event, board2, attackStatus);
+//     // CODE BELOW IS PUT IN A SEPRATE FUNCTION
+//     // if (attackStatus === "Missed") {
+//     //   event.target.classList.add("missed");
+//     //   // setTimeout(changeTurn, 300);
+//     //   if (gameMode.innerText === "PvC") {
+//     //     setTimeout(changeTurn, 300);
+//     //     setTimeout(attackFromPC, 500);
+//     //     // attackFromPC();
+//     //   } else {
+//     //     setTimeout(changeTurn, 300);
+//     //   }
+//     //   // changeTurn();
+//     // } else if (attackStatus === "Winner") {
+//     //   const sunkenShip =
+//     //     board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0];
+//     //   sunkenShip.forEach((value) => {
+//     //     boardCells2.forEach((item) => {
+//     //       if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//     //         item.classList.add("sunk");
+//     //       }
+//     //     });
+//     //   });
+//     //   playerStatus.innerText = "Player 1 Wins!";
+//     // } else if (attackStatus === "Hit") {
+//     //   event.target.classList.add("hit");
+//     // } else if (attackStatus === "Sunk") {
+//     //   const sunkenShip =
+//     //     board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0];
+//     //   // console.log(
+//     //   //   "last sunk",
+//     //   //   board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0]
+//     //   // );
+//     //   sunkenShip.forEach((value) => {
+//     //     boardCells2.forEach((item) => {
+//     //       if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//     //         item.classList.add("sunk");
+//     //       }
+//     //     });
+//     //   });
+//     //   // event.target.classList.add("sunk");
+//     // }
+//   } else if (playerStatus.innerText === "Player-2 plays") {
+//     // console.log(board1.receiveAttack(coordinates));
+//     const attackStatus = board1.receiveAttack(coordinates);
+//     markAttacks(event, board1, attackStatus);
 
-// make a game mode status that shows Game's mode 'PvP' or 'PvC'
-// based on the game mode modify functions
-// player-2 will become PC and play automatically
-// mark hit and sunken ships on player's map
-const gameMode = document.querySelector(".game-mode");
+//     // CODE BELOW IS PUT IN A SEPRATE FUNCTION
+//     // if (attackStatus === "Missed") {
+//     //   event.target.classList.add("missed");
+//     //   setTimeout(changeTurn, 300);
+//     //   // changeTurn();
+//     // } else if (attackStatus === "Winner") {
+//     //   const sunkenShip =
+//     //     board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
+//     //   sunkenShip.forEach((value) => {
+//     //     boardCells2.forEach((item) => {
+//     //       if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//     //         item.classList.add("sunk");
+//     //       }
+//     //     });
+//     //   });
+//     //   playerStatus.innerText = "Player 2 Wins!";
+//     // } else if (attackStatus === "Hit") {
+//     //   event.target.classList.add("hit");
+//     // } else if (attackStatus === "Sunk") {
+//     //   const sunkenShip =
+//     //     board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
+//     //   // console.log(
+//     //   //   "last sunk",
+//     //   //   board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0]
+//     //   // );
+//     //   sunkenShip.forEach((value) => {
+//     //     boardCells2.forEach((item) => {
+//     //       if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
+//     //         item.classList.add("sunk");
+//     //       }
+//     //     });
+//     //   });
+//     //   // event.target.classList.add("sunk");
+//     // }
+//   }
+//   // console.log(coordinates);
+// });
+
+// // to play against computer I need:
+// // a button that changes a mode from 1-1 to 'vs computer'
+// // let the computer place ships and attack till missed
+
+// // make a game mode status that shows Game's mode 'PvP' or 'PvC'
+// // based on the game mode modify functions
+// // player-2 will become PC and play automatically
+// // mark hit and sunken ships on player's map
+// const gameMode = document.querySelector(".game-mode");
+// ---------------------COMMENT--OUT--ABOVE----------------------//
 const playWithComputerBtn = document.querySelector(".play-with-computer-btn");
 const playWithFriendBtn = document.querySelector(".play-with-friend-btn");
-playWithComputerBtn.addEventListener("click", () => {
-  gameMode.innerText = "PvC";
-  placeShipsRandomlyBtn.style.display = "flex";
-  placeShipsYourselfBtn.style.display = "flex";
-  playWithFriendBtn.style.display = "none";
-  playWithComputerBtn.style.display = "none";
-});
-playWithFriendBtn.addEventListener("click", () => {
-  gameMode.innerText = "PvP";
-  placeShipsRandomlyBtn.style.display = "flex";
-  placeShipsYourselfBtn.style.display = "flex";
-  playWithFriendBtn.style.display = "none";
-  playWithComputerBtn.style.display = "none";
-});
-
+playWithComputerBtn.addEventListener("click", Game().switchToPvC);
+playWithFriendBtn.addEventListener("click", Game().switchToPvP);
+// ---------------------COMMENT--OUT--BELOW----------------------//
+// playWithComputerBtn.addEventListener("click", () => {
+//   gameMode.innerText = "PvC";
+//   placeShipsRandomlyBtn.style.display = "flex";
+//   placeShipsYourselfBtn.style.display = "flex";
+//   playWithFriendBtn.style.display = "none";
+//   playWithComputerBtn.style.display = "none";
+// });
+// playWithFriendBtn.addEventListener("click", () => {
+//   gameMode.innerText = "PvP";
+//   placeShipsRandomlyBtn.style.display = "flex";
+//   placeShipsYourselfBtn.style.display = "flex";
+//   playWithFriendBtn.style.display = "none";
+//   playWithComputerBtn.style.display = "none";
+// });
+// ---------------------COMMENT--OUT--ABOVE----------------------//
 // divide .js file into modules - Saturday 11/11/23
 // write tests for the game
 
@@ -1837,3 +1901,5 @@ playWithFriendBtn.addEventListener("click", () => {
 // console.log(board.shipsLocations);
 
 // export { Gameboard };
+
+// leave only events in this file, comment out with CAPS comments working code - 13/11/23 - Monday

@@ -36,7 +36,7 @@ const Ship = () => {
   };
   // calculate squares that are right next to a ship
   const calcNeighbourSquares = (firstSquare, shipLength, dir = "x") => {
-    console.log("firstSquare", firstSquare);
+    // console.log("firstSquare", firstSquare);
     const result = [];
     if (dir === "x") {
       // for 1 square ship: a, b, f, k, l, m, n, o
