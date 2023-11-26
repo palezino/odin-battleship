@@ -161,10 +161,10 @@ const Ship = () => {
   // ships building functions
   const make1sqShip = () => {
     if (shipSquares.length === 10) {
-      console.log("Ship squares:");
-      console.log(shipSquares);
-      console.log("Neigbour squares:");
-      console.log(neighbourSquares);
+      // console.log("Ship squares:");
+      // console.log(shipSquares);
+      // console.log("Neigbour squares:");
+      // console.log(neighbourSquares);
       return shipSquares;
     }
     // define x,y and the first square of the ship

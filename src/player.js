@@ -171,6 +171,7 @@ const Player = () => {
   let newShipDirection = "x";
 
   const handlePlaceShipBtn = () => {
+    console.log("ship", ship);
     // if the first square wasn't chosen then nothing happens
     if (!ship.length) {
       return false;
@@ -211,7 +212,9 @@ const Player = () => {
     // myShips.push(tempShipArr);
     neighbourSquares.push(tempNeighbArr);
     const length = defineLength(shipsArr);
-    placeShipsStatus.innerText = `Click on the first square of\n your ${length}-square ship.\nDouble click to change\n the direction.`;
+    if (placeShipsStatus !== null) {
+      placeShipsStatus.innerText = `Click on the first square of\n your ${length}-square ship.\nDouble click to change\n the direction.`;
+    }
 
     // stop creating ships when all the ships are placed
     if (shipsArr.length === 10) {
@@ -237,9 +240,11 @@ const Player = () => {
         // showShipsBtn.style.display = "flex";
       }
     }
+    return tempShipArr;
   };
 
   const handleGameboard1 = (event) => {
+    // console.log(event);
     if (
       event.target.classList.contains("outer-board-cell-x") ||
       event.target.classList.contains("outer-board-cell-y") ||
@@ -460,7 +465,7 @@ const Player = () => {
   };
 
   return {
-    // getName,
+    ship,
     handlePlaceShipBtn,
     createShipsYourself,
     createShipsRandomly,

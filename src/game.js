@@ -218,6 +218,7 @@ const Game = () => {
     if (playerStatus.innerText === "Player-1 plays") {
       placeShipsYourselfBtn.disabled = true;
       placeShipsRandomlyBtn.disabled = true;
+      placeShipsStatus.style.padding = "1rem 0";
       player1.createShipsYourself();
       // console.log("player1.myShips", player1.myShips);
       // ? add Confirm button to add indexes to the array
@@ -341,6 +342,7 @@ const Game = () => {
         hideShipsBtn.style.display = "flex";
         showShipsBtn.style.display = "flex";
         placeShipsStatus.innerText = "";
+        placeShipsStatus.style.padding = "0";
         changeTurn();
       }
       changeTurn();
@@ -379,6 +381,7 @@ const Game = () => {
       hideShipsBtn.style.display = "flex";
       showShipsBtn.style.display = "flex";
       placeShipsStatus.innerText = "";
+      placeShipsStatus.style.padding = "0";
     }
   };
   // PC attack function

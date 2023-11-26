@@ -1,5 +1,9 @@
 {
   "name": "odin-battleship",
+  "jest": {
+    "verbose": true,
+    "testEnvironment": "jsdom"
+  },
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -24,11 +28,14 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.9.0",
     "eslint-plugin-import": "^2.28.0",
-    "jest": "^29.6.2",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^22.1.0",
     "prettier": "3.0.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "npm-watch": "^0.11.0"
+    "npm-watch": "^0.11.0",
+    "text-encoding": "^0.7.0"
   }
 }
