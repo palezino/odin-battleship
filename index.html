@@ -11,17 +11,16 @@
     <title>Battleship</title>
 </head>
 <body>
-    <div class="main">
+    <!-- <div class="main"> -->
         <div class="container-1">
             <div class="info-1">
-                <div class="player-status">Player-1 plays</div>
+                <div class="my-board">My board</div>
             </div>
-            <div class="buttons-1">
+            <!-- <div class="buttons-1">
                 <button class="hide-ships">Hide ships</button>
                 <button class="show-ships">Show ships</button>
                 <button class="place-ship">Place the ship</button>
-                <!-- <button class="cancel-ship">Cancel</button> -->
-            </div>
+            </div> -->
             <div class="gameboard-1">
                 <div class="outer-board-cell-y"></div>
                 <div class="outer-board-cell-x">A</div>
@@ -151,6 +150,11 @@
             <div class="game-status">
                 Placing ships...
             </div>
+            <div class="buttons-1">
+                <button class="hide-ships">Hide ships</button>
+                <button class="show-ships">Show ships</button>
+                <button class="place-ship">Place the ship</button>
+            </div>
             <div class="place-ships-status"></div>
             <div class="place-ships">
                 <button class="place-ships-yourself-btn">Place ships by yourself</button>
@@ -165,8 +169,10 @@
         </div>
         <div class="container-2">
             <div class="info-2">
-                <div class="name-2">Opponent</div>
+                <div class="player-status">Player-1 plays</div>
             </div>
+            <!-- <div class="fake-container">
+            </div> -->
             <div class="gameboard-2">
                 <div class="outer-board-cell-y"></div>
                 <div class="outer-board-cell-x">A</div>
@@ -291,6 +297,6 @@
                 <div class="board-cell-2" data-x="9" data-y="9"></div>
             </div>
         </div>
-    </div>
+    <!-- </div> -->
 </body>
 </html>
