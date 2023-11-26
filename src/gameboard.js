@@ -1,8 +1,7 @@
 /* eslint-disable no-plusplus */
 const Gameboard = (shipsArr) => {
   const shipsLocations = shipsArr;
-  const hitShips = []; // ? might be useless
-  // const sunkShips = [];
+  const hitShips = [];
   const missedShots = [];
   const sunkenShipsReg = [];
   // hitShipsReg [length, index, coordinates...]
@@ -19,67 +18,15 @@ const Gameboard = (shipsArr) => {
     [1, 9],
   ];
 
-  // ? might be useless
-  const createBoard = () => {
-    const board = [];
-    let x = 0;
-    while (x < 10) {
-      for (let y = 0; y < 10; y++) {
-        board.push([x, y]);
-      }
-      x++;
-    }
-    // console.log(board);
-    return board;
-  };
-
-  // const showShips = () => shipsLocations;
-  // const arrangeShips = () => {
-  //   const arr = [];
-  //   shipsLocations.forEach((item, index) => {
-  //     arr.push([item.length, index]);
-  //   });
-  //   // console.log(arr);
-  //   return arr;
-  // };
-
   // takes ship coordinates, and hit coordinates, and returns true if the ship was hit
   const isHit = (ship, coordinates) =>
     ship.some(
       (value) => value[0] === coordinates[0] && value[1] === coordinates[1]
     );
-
+  // return true if the ship sunk
   const isSunk = () => {
-    // hitShipsReg.some(
-    //   (value) => value[value.length - 2] === value.length - 2
-    // ) === true && sunkenShipsReg.some((value) => index === value[1]) === false
-    // sunkenShipsReg.some((value) => {
-    //   console.log("index:", index);
-    //   console.log("value:", value);
-    //   return index === value[1];
-    // });
-    // console.log("index:", index);
-    // console.log(sunkenShipsReg);
-    // if (index === "undefined") {
-    //   return false;
-    // }
-    // if (
-    //   hitShipsReg.some(
-    //     (value) => value[value.length - 2] === value.length - 2
-    //   ) === true &&
-    //   sunkenShipsReg.some((value) => index === value[1]) === false
-    // ) {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
     let result = false;
     hitShipsReg.forEach((value) => {
-      // console.log("value in hitshipreg:", value);
-      // console.log("value[value.length - 2]:", value[value.length - 2]);
-      // console.log("value.length - 2", value.length - 2);
-      // value[value.length - 2] - indicates the length of the ship
-      // value.length - 2 - indicates the number of hit squares
       if (value[value.length - 2] === value.length - 2) {
         if (!value.includes("Sunk")) {
           result = true;
@@ -87,10 +34,9 @@ const Gameboard = (shipsArr) => {
         }
       }
     });
-    // console.log("result:", result);
     return result;
   };
-
+  // records hit ships
   const recordHit = (index, coordinates) => {
     hitShipsReg.forEach((element) => {
       if (element[element.length - 1] === index) {
@@ -98,41 +44,26 @@ const Gameboard = (shipsArr) => {
       }
     });
   };
-
+  // check if all the ships were sunken
   const checkWinner = (sunkShips) => {
     if (sunkShips.length === 10) {
       return true;
     }
     return false;
   };
-
+  // handles attack and return "Missed", "Hit", "Sunk", or "Winner"
   const receiveAttack = (coordinates) => {
-    // console.log("hitShipsReg:", hitShipsReg);
-    // const tempSunkArr = [...sunkenShipsReg];
     let sunkCheck = false;
-    // console.log("chieck", tempSunkArr, sunkenShipsReg);
     shipsLocations.forEach((item, index) => {
-      // console.log("isHit: ", isHit(item, coordinates));
       if (isHit(item, coordinates)) {
         // record hit ships
         recordHit(index, coordinates);
         hitShips.push(coordinates);
         // check if the ship is sunk
-        if (
-          // hitShipsReg.some((value) => value[value.length - 2] === value.length - 2)
-          isSunk()
-        ) {
-          // sunkenShipsReg.some(value => index === value[1])
-          // console.log(sunkenShipsReg.some((value) => index === value[1]));
-          // check if I need to save index in the array
+        if (isSunk()) {
           sunkenShipsReg.push([item, index]);
           sunkCheck = true;
-          // sunkShips.push(item);
-          console.log("Sunk", sunkenShipsReg);
-          // return "Sunk";
         }
-        console.log("Hit", hitShipsReg);
-        // return "Hit";
       }
     });
     // record missing shots
@@ -143,30 +74,24 @@ const Gameboard = (shipsArr) => {
       )
     ) {
       missedShots.push(coordinates);
-      // console.log("Missed", missedShots);
       return "Missed";
       // eslint-disable-next-line no-else-return
     } else if (sunkCheck) {
-      // console.log("Sunk", sunkenShipsReg);
       if (checkWinner(sunkenShipsReg)) {
         return "Winner";
       }
       return "Sunk";
     } else {
-      // console.log("chieck", tempSunkArr, sunkenShipsReg);
-      // console.log("Hit", hitShipsReg);
       return "Hit";
     }
   };
   return {
-    createBoard,
     receiveAttack,
     shipsLocations,
     hitShipsReg,
     missedShots,
     sunkenShipsReg,
     hitShips,
-    // sunkShips,
   };
 };
 

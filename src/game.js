@@ -9,16 +9,13 @@ const board1 = Gameboard(player1.myShips);
 const board2 = Gameboard(player2.myShips);
 
 const Game = () => {
+  // call for all the necessary selectors from DOM
   const playerStatus = document.querySelector(".player-status");
   const placeShipsStatus = document.querySelector(".place-ships-status");
   const gameStatus = document.querySelector(".game-status");
   const gameMode = document.querySelector(".game-mode");
   const boardCells1 = document.querySelectorAll(".board-cell-1");
   const boardCells2 = document.querySelectorAll(".board-cell-2");
-  // const player1 = Player();
-  // const player2 = Player();
-  // const board1 = Gameboard(player1.myShips);
-  // const board2 = Gameboard(player2.myShips);
   const placeShipsYourselfBtn = document.querySelector(
     ".place-ships-yourself-btn"
   );
@@ -31,24 +28,19 @@ const Game = () => {
   const showShipsBtn = document.querySelector(".show-ships");
   const playWithComputerBtn = document.querySelector(".play-with-computer-btn");
   const playWithFriendBtn = document.querySelector(".play-with-friend-btn");
-  // const shipsIndex1 = [];
-  // const shipsIndex2 = [];
 
+  // toggle the status of a current turn
   const changeStatus = () => {
     if (gameMode.innerText === "PvC") {
       if (playerStatus.innerText === "Player-1 plays") {
-        // hideShips();
         playerStatus.innerText = "Computer plays";
       } else if (playerStatus.innerText === "Computer plays") {
-        // hideShips();
         playerStatus.innerText = "Player-1 plays";
       }
     } else if (gameMode.innerText === "PvP") {
       if (playerStatus.innerText === "Player-1 plays") {
-        // hideShips();
         playerStatus.innerText = "Player-2 plays";
       } else if (playerStatus.innerText === "Player-2 plays") {
-        // hideShips();
         playerStatus.innerText = "Player-1 plays";
       }
     }
@@ -105,13 +97,9 @@ const Game = () => {
           }
         });
       });
-      // console.log("real one", board2.sunkenShipsReg[0][0][0]);
       const sunkShips = board2.sunkenShipsReg;
-      // console.log("sunken ships", sunkShips);
       sunkShips.forEach((value) => {
-        // console.log("value:", value);
         value[0].forEach((element) => {
-          // console.log("element:", element);
           boardCells2.forEach((item) => {
             if (
               +item.dataset.x === element[0] &&
@@ -121,15 +109,6 @@ const Game = () => {
             }
           });
         });
-
-        // boardCells2.forEach((item) => {
-        //   if (
-        //     +item.dataset.x === value[0][0][0] &&
-        //     +item.dataset.y === value[0][0][1]
-        //   ) {
-        //     item.classList.add("sunk");
-        //   }
-        // });
       });
     } else if (
       playerStatus.innerText === "Player-2 plays" ||
@@ -164,11 +143,8 @@ const Game = () => {
       });
 
       const sunkShips = board1.sunkenShipsReg;
-      // console.log("sunken ships", sunkShips);
       sunkShips.forEach((value) => {
-        // console.log("value:", value);
         value[0].forEach((element) => {
-          // console.log("element:", element);
           boardCells2.forEach((item) => {
             if (
               +item.dataset.x === element[0] &&
@@ -179,17 +155,9 @@ const Game = () => {
           });
         });
       });
-      // const sunkShips = board1.sunkenShipsReg;
-      // // console.log("sunken ships", board1.sunkenShipsReg);
-      // sunkShips.forEach((value) => {
-      //   boardCells2.forEach((item) => {
-      //     if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
-      //       item.classList.add("sunk");
-      //     }
-      //   });
-      // });
     }
   };
+  // change the player's turn
   const changeTurn = () => {
     changeStatus();
     hideShips();
@@ -198,15 +166,12 @@ const Game = () => {
       gameStatus.innerText = "Placing ships...";
     }
   };
+  // handle the button for random placement of ships
   const handleRandomPlacement = () => {
     if (playerStatus.innerText === "Player-1 plays") {
       placeShipsYourselfBtn.disabled = true;
       placeShipsRandomlyBtn.disabled = true;
       player1.createShipsRandomly();
-      // console.log(
-      //   "player1.myShips from handleRandomPlacement",
-      //   player1.myShips
-      // );
     } else if (playerStatus.innerText === "Player-2 plays") {
       gameStatus.innerText = "Placing ships...";
       placeShipsYourselfBtn.disabled = true;
@@ -214,91 +179,23 @@ const Game = () => {
       player2.createShipsRandomly();
     }
   };
+  // handle the button for manual placement of ships
   const handleManualPlacement = () => {
     if (playerStatus.innerText === "Player-1 plays") {
       placeShipsYourselfBtn.disabled = true;
       placeShipsRandomlyBtn.disabled = true;
       placeShipsStatus.style.padding = "1rem 0";
       player1.createShipsYourself();
-      // console.log("player1.myShips", player1.myShips);
-      // ? add Confirm button to add indexes to the array
-      // confirmBtn.addEventListener("click", () => {
-      //   player1.myShips.forEach((item) => {
-      //     item.forEach((value) => {
-      //       boardCells1.forEach((element, index) => {
-      //         if (
-      //           +element.dataset.x === value[0] &&
-      //           +element.dataset.y === value[1]
-      //         ) {
-      //           element.classList.add("ship");
-      //           shipsIndex1.push(index);
-      //         }
-      //       });
-      //     });
-      //   });
-      //   if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
-      //     placeShipsBtn.style.display = "none";
-      //     gameStatus.innerText = "Game on!";
-      //     placeShipBtn.style.display = "none";
-      //     cancelShipBtn.style.display = "none";
-      //     hideShipsBtn.style.display = "flex";
-      //     showShipsBtn.style.display = "flex";
-      //   }
-      // });
-      // below code moved to confirm btn
-      // player1.myShips.forEach((item) => {
-      //   item.forEach((value) => {
-      //     boardCells1.forEach((element, index) => {
-      //       if (
-      //         +element.dataset.x === value[0] &&
-      //         +element.dataset.y === value[1]
-      //       ) {
-      //         element.classList.add("ship");
-      //         shipsIndex1.push(index);
-      //       }
-      //     });
-      //   });
-      // });
-      // playerStatus.innerText = "Player-2 plays";
     } else if (playerStatus.innerText === "Player-2 plays") {
-      // if (gameStatus.innerText === `Can't put more ships!`) {
-      //   gameStatus.innerText = "Placing ships...";
-      // }
-      // const player2 = Player();
       gameStatus.innerText = "Placing ships...";
       placeShipsYourselfBtn.disabled = true;
       placeShipsRandomlyBtn.disabled = true;
       player2.createShipsYourself();
-      // const board2 = Gameboard(player2.myShips);
-      // below code moved to confirm btn
-      // player2.myShips.forEach((item) => {
-      //   item.forEach((value) => {
-      //     boardCells1.forEach((element, index) => {
-      //       if (
-      //         +element.dataset.x === value[0] &&
-      //         +element.dataset.y === value[1]
-      //       ) {
-      //         element.classList.add("ship");
-      //         shipsIndex2.push(index);
-      //       }
-      //     });
-      //   });
-      // });
     }
-    // if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
-    //   // console.log("HERE!");
-    //   placeShipsBtn.style.display = "none";
-    //   gameStatus.innerText = "Game on!";
-    //   placeShipBtn.style.display = "none";
-    //   cancelShipBtn.style.display = "none";
-    //   hideShipsBtn.style.display = "flex";
-    //   showShipsBtn.style.display = "flex";
-    // }
-    // console.log(shipsIndex1);
   };
+  // handle the button the confirms the placement of all ships
   const handleConfirmPlacement = () => {
     if (playerStatus.innerText === "Player-1 plays") {
-      // console.log("player1.myShips", player1.myShips);
       player1.myShips.forEach((item) => {
         item.forEach((value) => {
           boardCells1.forEach((element, index) => {
@@ -318,8 +215,6 @@ const Game = () => {
         player1.removeEvents();
         confirmBtn.style.display = "none";
         player2.createShipsRandomly();
-        // console.log("player1.myShips", player1.myShips);
-        // console.log("player2.myShips", player2.myShips);
         player2.myShips.forEach((item) => {
           item.forEach((value) => {
             boardCells1.forEach((element, index) => {
@@ -338,7 +233,6 @@ const Game = () => {
         placeShipsRandomlyBtn.style.display = "none";
         gameStatus.innerText = "Game on!";
         placeShipBtn.style.display = "none";
-        // cancelShipBtn.style.display = "none";
         hideShipsBtn.style.display = "flex";
         showShipsBtn.style.display = "flex";
         placeShipsStatus.innerText = "";
@@ -350,7 +244,6 @@ const Game = () => {
       confirmBtn.style.display = "none";
       placeShipsYourselfBtn.disabled = false;
       placeShipsRandomlyBtn.disabled = false;
-      // console.log("shipsIndex1", shipsIndex1);
     } else if (playerStatus.innerText === "Player-2 plays") {
       player2.myShips.forEach((item) => {
         item.forEach((value) => {
@@ -369,15 +262,12 @@ const Game = () => {
       changeTurn();
       player2.removeEvents();
       confirmBtn.style.display = "none";
-      // console.log("shipsIndex2", shipsIndex2);
     }
     if (shipsIndex1.length > 0 && shipsIndex2.length > 0) {
-      // console.log("HERE!");
       placeShipsYourselfBtn.style.display = "none";
       placeShipsRandomlyBtn.style.display = "none";
       gameStatus.innerText = "Game on!";
       placeShipBtn.style.display = "none";
-      // cancelShipBtn.style.display = "none";
       hideShipsBtn.style.display = "flex";
       showShipsBtn.style.display = "flex";
       placeShipsStatus.innerText = "";
@@ -386,9 +276,6 @@ const Game = () => {
   };
   // PC attack function
   const attackFromPC = (newCoordinates = null) => {
-    // DONE!!// don't attack the same square
-    // DONE!!// if hit attack neighbour square
-
     // for PvC mode
     if (gameMode.innerText === "PvC") {
       if (
@@ -404,7 +291,6 @@ const Game = () => {
           Math.floor(Math.random() * 10),
         ];
       }
-      console.log("newCoordinates", newCoordinates);
       const newAttackStatus = board1.receiveAttack(newCoordinates);
       if (newAttackStatus === "Missed") {
         boardCells2.forEach((element) => {
@@ -417,17 +303,13 @@ const Game = () => {
               element.classList.contains("sunk") ||
               element.classList.contains("hit")
             ) {
-              console.log("function fired again from missed!");
               attackFromPC();
             } else {
               element.classList.add("missed");
-              console.log("missed!");
               setTimeout(changeTurn, 500);
             }
           }
         });
-        // setTimeout(changeTurn, 300);
-        // changeTurn();
       } else if (newAttackStatus === "Winner") {
         const sunkenShip =
           board1.sunkenShipsReg[board1.sunkenShipsReg.length - 1][0];
@@ -435,7 +317,6 @@ const Game = () => {
           boardCells2.forEach((item) => {
             if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
               item.classList.add("sunk");
-              console.log("sunk!");
             }
           });
         });
@@ -451,7 +332,6 @@ const Game = () => {
               element.classList.contains("sunk") ||
               element.classList.contains("missed")
             ) {
-              console.log("function fired again from hit!");
               attackFromPC();
             } else {
               element.classList.add("hit");
@@ -463,12 +343,9 @@ const Game = () => {
               ];
               const neighbourSquare =
                 tempArr[Math.floor(Math.random() * tempArr.length)];
-              console.log("hit!", neighbourSquare);
               setTimeout(() => {
                 attackFromPC(neighbourSquare);
               }, 500);
-              // setTimeout(attackFromPC, 500);
-              // attackFromPC();
             }
           }
         });
@@ -483,23 +360,19 @@ const Game = () => {
           });
         });
         setTimeout(attackFromPC, 500);
-        // attackFromPC();
-        // event.target.classList.add("sunk");
       }
     }
   };
+  // mark attacks on the second gameboard
   const markAttacks = (event, board, attackStatus) => {
     if (attackStatus === "Missed") {
       event.target.classList.add("missed");
-      // setTimeout(changeTurn, 300);
       if (gameMode.innerText === "PvC") {
         setTimeout(changeTurn, 300);
         setTimeout(attackFromPC, 500);
-        // attackFromPC();
       } else {
         setTimeout(changeTurn, 300);
       }
-      // changeTurn();
     } else if (attackStatus === "Winner") {
       const sunkenShip =
         board.sunkenShipsReg[board.sunkenShipsReg.length - 1][0];
@@ -516,10 +389,6 @@ const Game = () => {
     } else if (attackStatus === "Sunk") {
       const sunkenShip =
         board.sunkenShipsReg[board.sunkenShipsReg.length - 1][0];
-      // console.log(
-      //   "last sunk",
-      //   board2.sunkenShipsReg[board2.sunkenShipsReg.length - 1][0]
-      // );
       sunkenShip.forEach((value) => {
         boardCells2.forEach((item) => {
           if (+item.dataset.x === value[0] && +item.dataset.y === value[1]) {
@@ -527,9 +396,9 @@ const Game = () => {
           }
         });
       });
-      // event.target.classList.add("sunk");
     }
   };
+  // handle attacks made by human players
   const handleAttack = (event) => {
     if (
       gameStatus.innerText === "Placing ships..." ||
@@ -552,6 +421,7 @@ const Game = () => {
       markAttacks(event, board1, attackStatus);
     }
   };
+  // set the PvC mode
   const switchToPvC = () => {
     gameMode.innerText = "PvC";
     placeShipsRandomlyBtn.style.display = "flex";
@@ -559,6 +429,7 @@ const Game = () => {
     playWithFriendBtn.style.display = "none";
     playWithComputerBtn.style.display = "none";
   };
+  // set the PvP mode
   const switchToPvP = () => {
     gameMode.innerText = "PvP";
     placeShipsRandomlyBtn.style.display = "flex";
@@ -566,7 +437,6 @@ const Game = () => {
     playWithFriendBtn.style.display = "none";
     playWithComputerBtn.style.display = "none";
   };
-  // end of factory function
   return {
     hideShips,
     showShips,
