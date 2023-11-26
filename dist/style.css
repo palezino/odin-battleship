@@ -141,8 +141,8 @@ body {
 }
 
 .board-cell-1:hover, .board-cell-2:hover {
-    background-color: #717070;
     cursor: default;
+    filter: brightness(80%);
 }
 
 .outer-board-cell-x {
